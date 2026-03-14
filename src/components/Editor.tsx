@@ -52,109 +52,96 @@ function EditorInner({ ydoc, provider, displayName, color }: EditorInnerProps) {
   }
 
   return (
-    <div className="flex-1 flex flex-col bg-[#f0f0f5] md:rounded-lg overflow-hidden border border-slate-700/20 shadow-2xl relative">
-      <div className="flex items-center gap-2 p-3 bg-slate-900/40 border-b border-slate-700/50 backdrop-blur-md sticky top-0 z-10 rounded-t-lg">
+    <div className="flex flex-col h-full">
+      {/* Toolbar */}
+      <div className="flex flex-wrap gap-1 p-2 border-b border-slate-700/50 bg-slate-800/50">
         <button
           onClick={() => editor.chain().focus().toggleBold().run()}
-          className={`p-2 rounded hover:bg-slate-700/50 transition-colors ${
-            editor.isActive('bold') ? 'bg-indigo-500/20 text-indigo-400' : 'text-slate-300'
-          }`}
+          className={`p-2 rounded hover:bg-slate-700/50 transition-colors ${editor.isActive('bold') ? 'bg-indigo-500/20 text-indigo-400' : 'text-slate-300'
+            }`}
           title="Bold"
         >
           <Bold size={18} />
         </button>
         <button
           onClick={() => editor.chain().focus().toggleItalic().run()}
-          className={`p-2 rounded hover:bg-slate-700/50 transition-colors ${
-            editor.isActive('italic') ? 'bg-indigo-500/20 text-indigo-400' : 'text-slate-300'
-          }`}
+          className={`p-2 rounded hover:bg-slate-700/50 transition-colors ${editor.isActive('italic') ? 'bg-indigo-500/20 text-indigo-400' : 'text-slate-300'
+            }`}
           title="Italic"
         >
           <Italic size={18} />
         </button>
         <button
           onClick={() => editor.chain().focus().toggleStrike().run()}
-          className={`p-2 rounded hover:bg-slate-700/50 transition-colors ${
-            editor.isActive('strike') ? 'bg-indigo-500/20 text-indigo-400' : 'text-slate-300'
-          }`}
+          className={`p-2 rounded hover:bg-slate-700/50 transition-colors ${editor.isActive('strike') ? 'bg-indigo-500/20 text-indigo-400' : 'text-slate-300'
+            }`}
           title="Strikethrough"
         >
           <Strikethrough size={18} />
         </button>
 
-        <div className="w-px h-6 bg-slate-700/50 mx-1"></div>
-
         <button
           onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
-          className={`p-2 rounded hover:bg-slate-700/50 transition-colors ${
-            editor.isActive('heading', { level: 1 })
+          className={`p-2 rounded hover:bg-slate-700/50 transition-colors ${editor.isActive('heading', { level: 1 })
               ? 'bg-indigo-500/20 text-indigo-400'
               : 'text-slate-300'
-          }`}
+            }`}
           title="Heading 1"
         >
           <Heading1 size={18} />
         </button>
         <button
           onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
-          className={`p-2 rounded hover:bg-slate-700/50 transition-colors ${
-            editor.isActive('heading', { level: 2 })
+          className={`p-2 rounded hover:bg-slate-700/50 transition-colors ${editor.isActive('heading', { level: 2 })
               ? 'bg-indigo-500/20 text-indigo-400'
               : 'text-slate-300'
-          }`}
+            }`}
           title="Heading 2"
         >
           <Heading2 size={18} />
         </button>
 
-        <div className="w-px h-6 bg-slate-700/50 mx-1"></div>
-
         <button
           onClick={() => editor.chain().focus().toggleBulletList().run()}
-          className={`p-2 rounded hover:bg-slate-700/50 transition-colors ${
-            editor.isActive('bulletList')
+          className={`p-2 rounded hover:bg-slate-700/50 transition-colors ${editor.isActive('bulletList')
               ? 'bg-indigo-500/20 text-indigo-400'
               : 'text-slate-300'
-          }`}
+            }`}
           title="Bullet List"
         >
           <List size={18} />
         </button>
         <button
           onClick={() => editor.chain().focus().toggleOrderedList().run()}
-          className={`p-2 rounded hover:bg-slate-700/50 transition-colors ${
-            editor.isActive('orderedList')
+          className={`p-2 rounded hover:bg-slate-700/50 transition-colors ${editor.isActive('orderedList')
               ? 'bg-indigo-500/20 text-indigo-400'
               : 'text-slate-300'
-          }`}
+            }`}
           title="Ordered List"
         >
           <ListOrdered size={18} />
         </button>
         <button
           onClick={() => editor.chain().focus().toggleBlockquote().run()}
-          className={`p-2 rounded hover:bg-slate-700/50 transition-colors ${
-            editor.isActive('blockquote')
+          className={`p-2 rounded hover:bg-slate-700/50 transition-colors ${editor.isActive('blockquote')
               ? 'bg-indigo-500/20 text-indigo-400'
               : 'text-slate-300'
-          }`}
+            }`}
           title="Blockquote"
         >
           <Quote size={18} />
         </button>
-        
-        <div className="flex-1"></div>
-        
-        <div className="flex items-center gap-2 px-3 py-1 bg-green-500/10 border border-green-500/20 rounded-full text-green-400 text-xs font-medium">
-          <span className="relative flex h-2 w-2">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
-          </span>
-          Synced
-        </div>
       </div>
-      <div className="flex-1 overflow-y-auto w-full max-w-4xl mx-auto min-h-[60vh] bg-white mt-4 mb-8 shadow-sm rounded">
-        <EditorContent editor={editor} className="h-full" />
+
+      {/* Editor Content */}
+      <div className="flex-1 overflow-auto">
+        <EditorContent editor={editor} />
+      </div>
+
+      {/* Status */}
+      <div className="px-4 py-2 text-xs text-slate-400 border-t border-slate-700/50">
+        {editor.isEditable ? '✏️ Editing' : '🔒 Read-only'} •{' '}
+        {provider.awareness.getStates().size} user{provider.awareness.getStates().size !== 1 ? 's' : ''} online
       </div>
     </div>
   );
@@ -185,11 +172,11 @@ export default function Editor(props: EditorProps) {
 
   if (!collabData) {
     return (
-      <div className="flex-1 flex items-center justify-center animate-pulse text-slate-400">
+      <div className="flex items-center justify-center h-full text-slate-400">
         Connecting to collaborative room...
       </div>
     );
   }
 
-  return <EditorInner {...props} ydoc={collabData.ydoc} provider={collabData.provider} />;
+  return <EditorInner {...props} {...collabData} />;
 }
