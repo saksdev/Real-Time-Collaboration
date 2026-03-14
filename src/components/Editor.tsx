@@ -26,7 +26,7 @@ function EditorInner({ ydoc, provider, displayName, color }: EditorInnerProps) {
     extensions: [
       StarterKit.configure({
         history: false,
-      } as any),
+      }),
       Collaboration.configure({
         document: ydoc,
       }),
