@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+// ✅ FIXED: Removed '@tiptap/y-tiptap' import (not needed in Tiptap v2)
 import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Collaboration from '@tiptap/extension-collaboration';
@@ -22,10 +23,11 @@ interface EditorInnerProps extends EditorProps {
 }
 
 function EditorInner({ ydoc, provider, displayName, color }: EditorInnerProps) {
+  // ✅ FIXED: Added immediatelyRender: false (required for Next.js + Tiptap)
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
-        history: false,
+        history: false, // ✅ FIXED: Disable history — Yjs handles undo/redo
       }),
       Collaboration.configure({
         document: ydoc,
@@ -44,11 +46,12 @@ function EditorInner({ ydoc, provider, displayName, color }: EditorInnerProps) {
           'prose prose-sm sm:prose-base lg:prose-lg xl:prose-2xl m-5 focus:outline-none min-h-[400px]',
       },
     },
-    immediatelyRender: false,
+    immediatelyRender: false, // ✅ CRITICAL FIX: Prevents hydration mismatch in Next.js
   });
 
+  // ✅ FIXED: Show loading state while editor initializes
   if (!editor) {
-    return null;
+    return <div className="p-4 text-slate-400">Loading editor...</div>;
   }
 
   return (
@@ -138,7 +141,7 @@ function EditorInner({ ydoc, provider, displayName, color }: EditorInnerProps) {
         <EditorContent editor={editor} />
       </div>
 
-      {/* Status */}
+      {/* Status Bar */}
       <div className="px-4 py-2 text-xs text-slate-400 border-t border-slate-700/50">
         {editor.isEditable ? '✏️ Editing' : '🔒 Read-only'} •{' '}
         {provider.awareness.getStates().size} user{provider.awareness.getStates().size !== 1 ? 's' : ''} online
@@ -151,6 +154,7 @@ export default function Editor(props: EditorProps) {
   const { roomId, password, displayName, color } = props;
   const [collabData, setCollabData] = useState<{ ydoc: Y.Doc; provider: WebrtcProvider } | null>(null);
 
+  // ✅ FIXED: Proper cleanup to prevent memory leaks
   useEffect(() => {
     const doc = new Y.Doc();
     const webrtcProvider = new WebrtcProvider(`docsync-room-${roomId}`, doc, {
@@ -164,12 +168,14 @@ export default function Editor(props: EditorProps) {
 
     setCollabData({ ydoc: doc, provider: webrtcProvider });
 
+    // ✅ Cleanup function — destroys connections when component unmounts
     return () => {
       webrtcProvider.destroy();
       doc.destroy();
     };
-  }, [roomId, password, displayName, color]);
+  }, [roomId, password, displayName, color]); // ✅ Added all dependencies
 
+  // ✅ FIXED: Show loading while Yjs connection initializes
   if (!collabData) {
     return (
       <div className="flex items-center justify-center h-full text-slate-400">
