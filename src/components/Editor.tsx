@@ -66,7 +66,7 @@ function EditorInner({ ydoc, provider, displayName, color, roomId, onExit, onCop
       if (synced) setStatus('synced');
     };
 
-    const handleStatus = (event: any) => {
+    const handleStatus = (event: { status: 'connected' | 'disconnected' | 'connecting' }) => {
       console.log(`[Collab] Connection status:`, event.status);
       if (event.status === 'connected') {
         setStatus('connected');
@@ -169,7 +169,7 @@ function EditorInner({ ydoc, provider, displayName, color, roomId, onExit, onCop
     </button>
   );
 
-  const activePeers = Array.from(provider.awareness.getStates().values()) as any[];
+  const activePeers = Array.from(provider.awareness.getStates().values()) as { user?: { name: string; color: string } }[];
 
   return (
     <div className={`h-full w-full ${theme === 'light' ? 'light-theme' : ''} transition-colors duration-500`}>

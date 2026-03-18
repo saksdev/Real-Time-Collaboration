@@ -2,7 +2,7 @@
 
 import { use, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { LogOut, User, ChevronRight } from 'lucide-react';
+import { User, ChevronRight } from 'lucide-react';
 import Editor from '@/components/Editor';
 
 function NameEntryModal({ onJoin, roomId }: { onJoin: (name: string) => void, roomId: string }) {
