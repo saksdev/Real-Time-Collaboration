@@ -1,78 +1,191 @@
 @import "tailwindcss";
 
-@theme {
-  --color-primary: #6366f1;
-  --color-secondary: #ec4899;
-  --color-accent: #06b6d4;
+@theme:root {
+  --background: 240 10% 3.9%;
+  --foreground: 0 0% 98%;
+  --card: 240 10% 3.9%;
+  --card-foreground: 0 0% 98%;
+  --popover: 240 10% 3.9%;
+  --popover-foreground: 0 0% 98%;
+  --primary: 248 89% 65%;
+  --primary-foreground: 0 0% 98%;
+  --secondary: 240 3.7% 15.9%;
+  --secondary-foreground: 0 0% 98%;
+  --muted: 240 3.7% 15.9%;
+  --muted-foreground: 240 5% 64.9%;
+  --accent: 240 3.7% 15.9%;
+  --accent-foreground: 0 0% 98%;
 }
 
-:root {
-  --background: #0d0d12;
-  --foreground: #f8fafc;
-  --primary-glow: rgba(99, 102, 241, 0.4);
-  --surface: rgba(30, 30, 40, 0.6);
-  --surface-border: rgba(255, 255, 255, 0.08);
+.light-theme {
+  --background: 0 0% 98%;
+  --foreground: 240 10% 3.9%;
+  --card: 0 0% 100%;
+  --card-foreground: 240 10% 3.9%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 240 10% 3.9%;
+  --primary: 248 89% 65%;
+  --primary-foreground: 0 0% 98%;
+  --secondary: 240 4.8% 95.9%;
+  --secondary-foreground: 240 5.9% 10%;
+  --muted: 240 4.8% 95.9%;
+  --muted-foreground: 240 3.8% 46.1%;
+  --accent: 240 4.8% 95.9%;
+  --accent-foreground: 240 5.9% 10%;
 }
 
 @layer base {
   body {
-    background-color: var(--background);
-    color: var(--foreground);
-    @apply antialiased;
-    overflow-x: hidden;
+    @apply bg-[#0d0d12] text-white transition-colors duration-500 overflow-hidden;
   }
+}
+
+.light-theme body {
+  @apply bg-slate-50 text-slate-900;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  @apply bg-transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  @apply bg-white/5 rounded-full transition-colors duration-300;
+}
+
+.custom-scrollbar:hover::-webkit-scrollbar-thumb {
+  @apply bg-white/20;
+}
+
+.light-theme .custom-scrollbar::-webkit-scrollbar-thumb {
+  @apply bg-black/5;
+}
+
+.light-theme .custom-scrollbar:hover::-webkit-scrollbar-thumb {
+  @apply bg-black/20;
 }
 
 @layer utilities {
   .glass-card {
-    background: var(--surface);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border: 1px solid var(--surface-border);
-    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+    @apply bg-white/[0.03] border border-white/10 backdrop-blur-3xl;
   }
 
-  .text-glow {
-    text-shadow: 0 0 20px var(--primary-glow);
+  .light-theme .glass-card {
+    @apply bg-white/80 border-slate-200 shadow-xl;
   }
-  
-  .bg-glow-primary {
-    box-shadow: 0 0 30px var(--primary-glow);
+
+  .paper-effect {
+    @apply shadow-[0_20px_50px_rgba(0,0,0,0.3)] border border-white/5 transition-all duration-500;
+  }
+
+  .light-theme .paper-effect {
+    @apply shadow-[0_10px_40px_rgba(0,0,0,0.05)] border-slate-200;
+  }
+
+  .glass-toolbar {
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  }
+
+  .text-glow-indigo {
+    text-shadow: 0 0 15px rgba(99, 102, 241, 0.5);
   }
 }
 
 /* Background Animated Gradient Mesh */
 .bg-mesh {
-  position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
-  z-index: -1;
-  overflow: hidden;
-  background: radial-gradient(circle at 15% 50%, rgba(99, 102, 241, 0.15), transparent 25%),
-              radial-gradient(circle at 85% 30%, rgba(236, 72, 153, 0.15), transparent 25%),
-              radial-gradient(circle at 50% 80%, rgba(6, 182, 212, 0.15), transparent 25%);
-  animation: bgShift 20s ease-in-out infinite alternate;
-}
-
-@keyframes bgShift {
-  0% { transform: scale(1); }
-  100% { transform: scale(1.1); }
+  background: radial-gradient(circle at 10% 20%, rgba(99, 102, 241, 0.1) 0%, transparent 40%),
+              radial-gradient(circle at 90% 80%, rgba(6, 182, 212, 0.1) 0%, transparent 40%),
+              radial-gradient(circle at 50% 50%, rgba(20, 20, 35, 1) 0%, rgba(10, 10, 15, 1) 100%);
+  background-attachment: fixed;
 }
 
 /* Editor Specific Styles */
 .ProseMirror {
   outline: none;
-  min-height: 50vh;
-  padding: 1.5rem;
-  font-size: 1.125rem;
-  line-height: 1.7;
-  color: #111; /* Editor canvas is light for contrast like real paper */
-  background: white;
-  border-radius: 0.5rem;
-  box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+  min-height: 60vh;
+  padding: 1rem 1.25rem !important;
+  font-size: 1.1rem;
+  line-height: 1.8;
+  color: inherit;
+  background: transparent;
+}
+
+.light-theme .ProseMirror {
+  color: #0f172a; /* dark slate on light */
+}
+
+/* VS Code-style line numbers (per block) */
+.ProseMirror {
+  counter-reset: line;
+}
+
+.ProseMirror > * {
+  position: relative;
+  padding-left: 3rem;
+}
+
+.ProseMirror > *::before {
+  counter-increment: line;
+  content: counter(line);
+  position: absolute;
+  left: 0.75rem;
+  top: 0.15rem;
+  color: #94a3b8;
+  font-size: 0.75rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  text-align: right;
+  width: 1.5rem;
+}
+
+.ProseMirror h1 {
+  font-size: 2.25rem;
+  font-weight: 800;
+  margin-top: 1.5rem;
+  margin-bottom: 1rem;
+  color: #0f172a;
+}
+
+.ProseMirror h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-top: 1.25rem;
+  margin-bottom: 0.75rem;
+  color: #1e293b;
+}
+
+.ProseMirror p {
+  margin-bottom: 1rem;
+}
+
+.ProseMirror ul {
+  list-style-type: disc;
+  padding-left: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.ProseMirror ol {
+  list-style-type: decimal;
+  padding-left: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.ProseMirror blockquote {
+  border-left: 4px solid #6366f1;
+  padding-left: 1rem;
+  font-style: italic;
+  color: #475569;
+  margin: 1.5rem 0;
 }
 
 .ProseMirror p.is-editor-empty:first-child::before {
-  color: #9ca3af;
+  color: #94a3b8;
   content: attr(data-placeholder);
   float: left;
   height: 0;
@@ -81,8 +194,8 @@
 
 /* Collaboration Cursors */
 .collaboration-cursor__caret {
-  border-left: 2px solid #0d0d0d;
-  border-right: 2px solid #0d0d0d;
+  border-left: 2px solid;
+  border-right: 2px solid;
   margin-left: -2px;
   margin-right: -2px;
   pointer-events: none;
@@ -92,7 +205,7 @@
 
 .collaboration-cursor__label {
   border-radius: 3px 3px 3px 0;
-  color: #0d0d0d;
+  color: #fff;
   font-size: 12px;
   font-style: normal;
   font-weight: 600;

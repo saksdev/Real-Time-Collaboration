@@ -7,6 +7,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 export default function LandingPage() {
   const router = useRouter();
+  const [activeTab, setActiveTab] = useState<'create' | 'join'>('create');
   const [displayName, setDisplayName] = useState('');
   const [roomId, setRoomId] = useState('');
   const [isPrivate, setIsPrivate] = useState(false);
@@ -15,7 +16,9 @@ export default function LandingPage() {
 
   useEffect(() => {
     setIsMounted(true);
-    setRoomId(uuidv4().substring(0, 8)); // Generate a short random room ID initially
+    const storedName = localStorage.getItem('docsync_display_name');
+    if (storedName) setDisplayName(storedName);
+    setRoomId(uuidv4().substring(0, 8));
   }, []);
 
   const handleGenerateRoomId = () => {
@@ -24,16 +27,17 @@ export default function LandingPage() {
 
   const handleEnterWorkspace = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!displayName.trim() || !roomId.trim()) return;
-    if (isPrivate && !password.trim()) return;
+    if (!roomId.trim()) return;
+    
+    // Only require name for "create" or if not already stored
+    if (activeTab === 'create' && !displayName.trim()) return;
 
-    // We store display name in local storage so it persists over reloads
-    localStorage.setItem('docsync_display_name', displayName);
+    if (displayName.trim()) {
+      localStorage.setItem('docsync_display_name', displayName);
+    }
 
     let targetUrl = `/${roomId}`;
-    if (isPrivate) {
-      // In a real app we'd pass this secularly or use an auth system. 
-      // For this P2P demo, we just pass the password in the hash or querystring to construct the WebRTC room name
+    if (isPrivate && password.trim()) {
       targetUrl += `?password=${encodeURIComponent(password)}`;
     }
 
@@ -43,114 +47,167 @@ export default function LandingPage() {
   if (!isMounted) return null;
 
   return (
-    <main className="min-h-screen flex items-center justify-center relative px-4">
-      {/* Animated Background */}
-      <div className="bg-mesh pointer-events-none" />
-
-      {/* Main Glassmorphism Card */}
-      <div className="glass-card rounded-2xl w-full max-w-md p-8 relative overflow-hidden z-10 transition-all duration-500 hover:shadow-2xl">
+    <main className="min-h-screen flex items-center justify-center relative px-4 bg-[#0d0d12]">
+      {/* Main Premium Card */}
+      <div className="glass-card rounded-3xl w-full max-w-lg p-1 relative overflow-hidden z-10 transition-all duration-700 shadow-[0_0_50px_rgba(0,0,0,0.5)]">
         
-        {/* Glow Effects inside card */}
-        <div className="absolute -top-24 -left-24 w-48 h-48 bg-indigo-500 rounded-full mix-blend-screen filter blur-[80px] opacity-50"></div>
-        <div className="absolute -bottom-24 -right-24 w-48 h-48 bg-pink-500 rounded-full mix-blend-screen filter blur-[80px] opacity-50"></div>
-
-        <div className="relative z-10">
-          <div className="flex items-center gap-3 mb-8">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-500 to-cyan-400 flex items-center justify-center text-white font-bold text-xl shadow-lg">
+        <div className="bg-slate-900/40 backdrop-blur-3xl rounded-[22px] p-8 sm:p-10 relative">
+          {/* Header Branding */}
+          <div className="flex flex-col items-center mb-10 text-center">
+            <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-indigo-500 to-cyan-400 flex items-center justify-center text-white font-black text-3xl shadow-2xl mb-4 rotate-3 hover:rotate-0 transition-transform duration-500">
               D
             </div>
-            <h1 className="text-3xl font-extrabold tracking-tight text-glow text-white">
-              DocSync <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-cyan-400">Pro</span>
+            <h1 className="text-4xl font-black tracking-tighter text-white mb-2">
+              DocSync <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-cyan-400">PRO</span>
             </h1>
+            <p className="text-slate-400 text-sm font-medium max-w-[280px]">
+              Collaboration without limits. Synchronized in real-time.
+            </p>
           </div>
 
-          <p className="text-slate-300 mb-8 text-sm">
-            Real-time collaborative text editing with powerful P2P synchronization. Join a room to start collaborating instantly.
-          </p>
+          {/* Mode Tabs */}
+          <div className="flex p-1 bg-white/5 rounded-xl mb-8 border border-white/5 relative">
+            <div 
+              className="absolute inset-y-1 bg-indigo-500/20 border border-indigo-500/30 rounded-lg transition-all duration-500 ease-out z-0 shadow-[0_0_20px_rgba(99,102,241,0.3)]"
+              style={{ 
+                left: activeTab === 'create' ? '4px' : 'calc(50% + 4px)',
+                width: 'calc(50% - 8px)'
+              }}
+            />
+            <button
+              onClick={() => setActiveTab('create')}
+              className={`flex-1 py-2.5 text-sm font-bold transition-all z-10 ${activeTab === 'create' ? 'text-indigo-400' : 'text-slate-500 hover:text-slate-300'}`}
+            >
+              Start New
+            </button>
+            <button
+              onClick={() => setActiveTab('join')}
+              className={`flex-1 py-2.5 text-sm font-bold transition-all z-10 ${activeTab === 'join' ? 'text-indigo-400' : 'text-slate-500 hover:text-slate-300'}`}
+            >
+              Join Existing
+            </button>
+          </div>
 
           <form onSubmit={handleEnterWorkspace} className="space-y-6">
             
-            {/* Display Name Input */}
-            <div className="space-y-2">
-              <label className="text-xs font-semibold uppercase tracking-wider text-slate-400">Your Display Name</label>
-              <input 
-                type="text" 
-                value={displayName}
-                onChange={(e) => setDisplayName(e.target.value)}
-                placeholder="e.g. Alice"
-                required
-                className="w-full bg-slate-900/50 border border-slate-700/50 rounded-lg px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
-              />
-            </div>
+            {activeTab === 'create' && (
+              <div className="space-y-6 animate-in fade-in zoom-in-95 duration-500">
+                {/* Display Name */}
+                <div className="space-y-2 group">
+                  <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500 ml-1">Architect Name</label>
+                  <input 
+                    type="text" 
+                    value={displayName}
+                    onChange={(e) => setDisplayName(e.target.value)}
+                    placeholder="Enter your name"
+                    required
+                    className="w-full bg-black/20 border border-white/5 rounded-xl px-5 py-3.5 text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 transition-all font-medium"
+                  />
+                </div>
 
-            {/* Room ID Input */}
-            <div className="space-y-2">
-              <label className="text-xs font-semibold uppercase tracking-wider text-slate-400">Room ID</label>
-              <div className="flex gap-2">
-                <input 
-                  type="text" 
-                  value={roomId}
-                  onChange={(e) => setRoomId(e.target.value)}
-                  placeholder="e.g. daily-standup"
-                  required
-                  className="w-full bg-slate-900/50 border border-slate-700/50 rounded-lg px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
-                />
-                <button 
-                  type="button"
-                  onClick={handleGenerateRoomId}
-                  className="p-3 bg-slate-800/80 hover:bg-slate-700 text-slate-300 rounded-lg border border-slate-700/50 transition-colors tooltip"
-                  title="Generate Random ID"
-                >
-                  <RefreshCcw size={20} className="hover:rotate-180 transition-transform duration-500" />
-                </button>
+                {/* Room ID Section */}
+                <div className="space-y-2 group">
+                  <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500 ml-1">Workspace ID</label>
+                  <div className="flex gap-2">
+                    <input 
+                      type="text" 
+                      value={roomId}
+                      onChange={(e) => setRoomId(e.target.value)}
+                      placeholder="Custom room slug"
+                      className="w-full bg-black/20 border border-white/5 rounded-xl px-5 py-3.5 text-white font-mono text-sm placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all"
+                    />
+                    <button 
+                      type="button"
+                      onClick={handleGenerateRoomId}
+                      className="p-3.5 bg-white/5 hover:bg-white/10 text-slate-300 rounded-xl border border-white/5 transition-all active:scale-95 group"
+                      title="Generate"
+                    >
+                      <RefreshCcw size={20} className="group-hover:rotate-180 transition-transform duration-700" />
+                    </button>
+                  </div>
+                </div>
+
+                {/* Privacy Options */}
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between mb-1 px-1">
+                    <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">Security</label>
+                    <span className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded leading-none ${isPrivate ? 'bg-pink-500/10 text-pink-500' : 'bg-cyan-500/10 text-cyan-500'}`}>
+                      {isPrivate ? 'Restricted' : 'Open Access'}
+                    </span>
+                  </div>
+                  <div className="grid grid-cols-2 gap-3 p-1 bg-white/5 rounded-xl border border-white/5">
+                    <button
+                      type="button"
+                      onClick={() => setIsPrivate(false)}
+                      className={`flex items-center justify-center gap-2 py-2.5 rounded-lg text-xs font-bold transition-all ${!isPrivate ? 'bg-white/10 text-white shadow-inner' : 'text-slate-500 hover:text-slate-300'}`}
+                    >
+                      <Globe size={14} /> Global
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setIsPrivate(true)}
+                      className={`flex items-center justify-center gap-2 py-2.5 rounded-lg text-xs font-bold transition-all ${isPrivate ? 'bg-white/10 text-white shadow-inner' : 'text-slate-500 hover:text-slate-300'}`}
+                    >
+                      <Lock size={14} /> Secure
+                    </button>
+                  </div>
+                </div>
+
+                {isPrivate && (
+                  <div className="space-y-2 animate-in slide-in-from-top-2 duration-300">
+                    <input 
+                      type="password" 
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="Access Token Required"
+                      required
+                      className="w-full bg-pink-500/5 border border-pink-500/10 rounded-xl px-5 py-3.5 text-white placeholder-pink-500/30 focus:outline-none focus:ring-2 focus:ring-pink-500/30 transition-all font-medium"
+                    />
+                  </div>
+                )}
               </div>
-            </div>
+            )}
 
-            {/* Room Type Toggle */}
-            <div className="bg-slate-900/50 p-1.5 rounded-lg flex relative border border-slate-700/50">
-              <div 
-                className="absolute inset-y-1.5 w-[calc(50%-6px)] bg-slate-800 rounded shadow-md transition-all duration-300 ease-out"
-                style={{ left: isPrivate ? 'calc(50% + 3px)' : '6px' }}
-              />
-              
-              <button
-                type="button"
-                onClick={() => setIsPrivate(false)}
-                className={`flex-1 flex items-center justify-center gap-2 py-2 text-sm font-medium z-10 transition-colors ${!isPrivate ? 'text-white' : 'text-slate-400 hover:text-slate-300'}`}
-              >
-                <Globe size={16} /> Public
-              </button>
-              
-              <button
-                type="button"
-                onClick={() => setIsPrivate(true)}
-                className={`flex-1 flex items-center justify-center gap-2 py-2 text-sm font-medium z-10 transition-colors ${isPrivate ? 'text-white' : 'text-slate-400 hover:text-slate-300'}`}
-              >
-                <Lock size={16} /> Private
-              </button>
-            </div>
+            {activeTab === 'join' && (
+              <div className="space-y-6 animate-in fade-in zoom-in-95 duration-500">
+                <div className="text-center p-6 bg-indigo-500/5 rounded-2xl border border-indigo-500/10 mb-2">
+                  <p className="text-xs text-indigo-400 font-bold uppercase tracking-widest mb-1">Collaboration Awaits</p>
+                  <p className="text-[10px] text-slate-500">Paste the Workspace ID provided by your team architect.</p>
+                </div>
 
-            {/* Password Input (Conditionally Rendered) */}
-            <div className={`space-y-2 transition-all duration-300 overflow-hidden ${isPrivate ? 'max-h-24 opacity-100' : 'max-h-0 opacity-0'}`}>
-              <label className="text-xs font-semibold uppercase tracking-wider text-slate-400">Room Password</label>
-              <input 
-                type="password" 
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Required for private rooms"
-                required={isPrivate}
-                className="w-full bg-slate-900/50 border border-slate-700/50 rounded-lg px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
-              />
-            </div>
+                <div className="space-y-2">
+                  <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500 ml-1">Paste Vault ID</label>
+                  <input 
+                    type="text" 
+                    value={roomId}
+                    onChange={(e) => setRoomId(e.target.value)}
+                    placeholder="e.g. ALPHA-Q3"
+                    required
+                    className="w-full bg-black/20 border border-white/5 rounded-xl px-5 py-4 text-center text-white font-mono text-xl tracking-[0.2em] placeholder-slate-700/50 focus:outline-none focus:ring-2 focus:ring-cyan-500/50 transition-all"
+                  />
+                </div>
+              </div>
+            )}
 
             <button 
               type="submit"
-              className="w-full bg-gradient-to-r from-indigo-500 to-cyan-500 hover:from-indigo-400 hover:to-cyan-400 text-white font-bold py-3.5 px-4 rounded-lg shadow-lg flex items-center justify-center gap-2 transition-all transform hover:-translate-y-0.5"
+              className="w-full relative group overflow-hidden bg-gradient-to-r from-indigo-500 to-cyan-500 hover:from-indigo-400 hover:to-cyan-400 text-white font-black py-4.5 px-6 rounded-xl shadow-[0_10px_30px_rgba(99,102,241,0.3)] flex items-center justify-center gap-3 transition-all transform hover:-translate-y-1 active:scale-[0.98]"
             >
-              Enter Workspace <ChevronRight size={20} />
+              <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
+              <span className="relative z-10 uppercase tracking-[0.15em] text-sm">
+                {activeTab === 'create' ? 'Initialize Workspace' : 'Link Connection'}
+              </span>
+              <ChevronRight size={18} className="relative z-10" />
             </button>
-            
           </form>
+
+          {/* Footer Info */}
+          <div className="mt-8 pt-8 border-t border-white/5 flex justify-between items-center px-2">
+            <span className="text-[10px] font-bold text-slate-600 uppercase tracking-widest">v2.11 Release</span>
+            <div className="flex gap-4">
+               <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></div>
+            </div>
+          </div>
         </div>
       </div>
     </main>
