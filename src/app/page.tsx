@@ -47,7 +47,7 @@ export default function LandingPage() {
   if (!isMounted) return null;
 
   return (
-    <main className="min-h-screen flex items-center justify-center relative px-4 bg-[#0d0d12]">
+    <main className="min-h-[100dvh] flex items-center justify-center relative px-4 bg-[#0d0d12]">
       {/* Main Premium Card */}
       <div className="glass-card rounded-3xl w-full max-w-lg p-1 relative overflow-hidden z-10 transition-all duration-700 shadow-[0_0_50px_rgba(0,0,0,0.5)]">
         

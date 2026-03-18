@@ -141,7 +141,7 @@ export default function WorkspacePage({
   };
 
   return (
-    <div className="h-screen w-screen bg-mesh text-slate-100 overflow-hidden font-sans">
+    <div className="h-[100dvh] w-screen bg-mesh text-slate-100 overflow-hidden font-sans">
       <Editor
         roomId={roomId}
         password={password}

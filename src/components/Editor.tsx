@@ -153,7 +153,7 @@ function EditorInner({ ydoc, provider, displayName, color, roomId, onExit, onCop
         event.preventDefault();
         onClick();
       }}
-      className={`p-2 rounded-lg transition-all duration-200 group relative ${
+      className={`p-3 sm:p-2 rounded-lg transition-all duration-200 group relative ${
         isActive 
           ? 'bg-indigo-500 text-white shadow-lg shadow-indigo-500/20 scale-105' 
           : theme === 'dark' 
