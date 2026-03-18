@@ -66,11 +66,11 @@ function EditorInner({ ydoc, provider, displayName, color, roomId, onExit, onCop
       if (synced) setStatus('synced');
     };
 
-    const handleStatus = (event: { status: 'connected' | 'disconnected' | 'connecting' }) => {
-      console.log(`[Collab] Connection status:`, event.status);
-      if (event.status === 'connected') {
+    const handleStatus = (event: { connected: boolean }) => {
+      console.log(`[Collab] Connection status:`, event.connected ? 'connected' : 'disconnected');
+      if (event.connected) {
         setStatus('connected');
-      } else if (event.status === 'disconnected') {
+      } else {
         setStatus('disconnected');
       }
     };
