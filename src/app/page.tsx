@@ -13,6 +13,7 @@ export default function LandingPage() {
   const [joinRoomId, setJoinRoomId] = useState('');
   const [isPrivate, setIsPrivate] = useState(false);
   const [password, setPassword] = useState('');
+  const [joinPassword, setJoinPassword] = useState('');
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
@@ -38,12 +39,15 @@ export default function LandingPage() {
       localStorage.setItem('docsync_display_name', displayName);
     }
 
-    let targetUrl = `/${finalRoomId}`;
-    if (isPrivate && password.trim()) {
-      targetUrl += `?password=${encodeURIComponent(password)}`;
+    // Securely pass password to the editor via session storage
+    const finalPassword = activeTab === 'create' ? (isPrivate ? password : '') : joinPassword;
+    if (finalPassword.trim()) {
+      sessionStorage.setItem('docsync_password', finalPassword.trim());
+    } else {
+      sessionStorage.removeItem('docsync_password');
     }
 
-    router.push(targetUrl);
+    router.push(`/${finalRoomId}`);
   };
 
   if (!isMounted) return null;
@@ -186,6 +190,17 @@ export default function LandingPage() {
                     placeholder="e.g. ALPHA"
                     required
                     className="w-full bg-black/20 border border-white/5 rounded-xl px-5 py-4 text-center text-white font-mono text-xl tracking-[0.2em] placeholder-slate-700/50 focus:outline-none focus:ring-2 focus:ring-cyan-500/50 transition-all"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500 ml-1">Vault Key (Optional)</label>
+                  <input 
+                    type="password" 
+                    value={joinPassword}
+                    onChange={(e) => setJoinPassword(e.target.value)}
+                    placeholder="Leave blank if open access"
+                    className="w-full bg-black/20 border border-white/5 rounded-xl px-5 py-3.5 text-center text-white placeholder-slate-700/50 focus:outline-none focus:ring-2 focus:ring-cyan-500/50 transition-all font-medium"
                   />
                 </div>
               </div>

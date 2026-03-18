@@ -5,13 +5,14 @@ import { useRouter } from 'next/navigation';
 import { User, ChevronRight } from 'lucide-react';
 import Editor from '@/components/Editor';
 
-function NameEntryModal({ onJoin, roomId }: { onJoin: (name: string) => void, roomId: string }) {
+function NameEntryModal({ onJoin, roomId }: { onJoin: (name: string, password?: string) => void, roomId: string }) {
   const [name, setName] = useState('');
+  const [password, setPassword] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (name.trim()) {
-      onJoin(name.trim());
+      onJoin(name.trim(), password.trim() || undefined);
     }
   };
 
@@ -32,17 +33,30 @@ function NameEntryModal({ onJoin, roomId }: { onJoin: (name: string) => void, ro
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="space-y-2">
-              <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500 ml-1">Your Alias</label>
-              <input 
-                autoFocus
-                type="text" 
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="How should others see you?"
-                required
-                className="w-full bg-black/20 border border-white/5 rounded-xl px-5 py-4 text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all font-medium"
-              />
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500 ml-1">Your Alias</label>
+                <input 
+                  autoFocus
+                  type="text" 
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="How should others see you?"
+                  required
+                  className="w-full bg-black/20 border border-white/5 rounded-xl px-5 py-4 text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all font-medium"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500 ml-1">Vault Key (Optional)</label>
+                <input 
+                  type="password" 
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Leave blank if open access"
+                  className="w-full bg-black/20 border border-white/5 rounded-xl px-5 py-4 text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all font-medium"
+                />
+              </div>
             </div>
 
             <button 
@@ -72,16 +86,21 @@ export default function WorkspacePage({
 }) {
   const router = useRouter();
   const resolvedParams = use(params);
-  const resolvedSearchParams = use(searchParams);
   const roomId = resolvedParams.roomId;
-  const password = typeof resolvedSearchParams.password === 'string' ? resolvedSearchParams.password : undefined;
 
+  const [password, setPassword] = useState<string | undefined>(undefined);
   const [displayName, setDisplayName] = useState('');
   const [color, setColor] = useState('');
   const [isMounted, setIsMounted] = useState(false);
   const [showNameModal, setShowNameModal] = useState(false);
 
   useEffect(() => {
+    const sessionPassword = sessionStorage.getItem('docsync_password');
+    if (sessionPassword) {
+      setPassword(sessionPassword);
+      sessionStorage.removeItem('docsync_password');
+    }
+
     const storedName = localStorage.getItem('docsync_display_name');
     if (!storedName) {
       setShowNameModal(true);
@@ -98,7 +117,8 @@ export default function WorkspacePage({
     }
   }, []);
 
-  const handleJoin = (name: string) => {
+  const handleJoin = (name: string, enteredPassword?: string) => {
+    if (enteredPassword) setPassword(enteredPassword);
     localStorage.setItem('docsync_display_name', name);
     setDisplayName(name);
     setShowNameModal(false);
