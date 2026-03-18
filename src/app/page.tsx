@@ -9,7 +9,8 @@ export default function LandingPage() {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<'create' | 'join'>('create');
   const [displayName, setDisplayName] = useState('');
-  const [roomId, setRoomId] = useState('');
+  const [createRoomId, setCreateRoomId] = useState('');
+  const [joinRoomId, setJoinRoomId] = useState('');
   const [isPrivate, setIsPrivate] = useState(false);
   const [password, setPassword] = useState('');
   const [isMounted, setIsMounted] = useState(false);
@@ -18,16 +19,17 @@ export default function LandingPage() {
     setIsMounted(true);
     const storedName = localStorage.getItem('docsync_display_name');
     if (storedName) setDisplayName(storedName);
-    setRoomId(uuidv4().substring(0, 8));
+    setCreateRoomId(uuidv4().substring(0, 5));
   }, []);
 
   const handleGenerateRoomId = () => {
-    setRoomId(uuidv4().substring(0, 8));
+    setCreateRoomId(uuidv4().substring(0, 5));
   };
 
   const handleEnterWorkspace = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!roomId.trim()) return;
+    const finalRoomId = activeTab === 'create' ? createRoomId : joinRoomId;
+    if (!finalRoomId.trim()) return;
     
     // Only require name for "create" or if not already stored
     if (activeTab === 'create' && !displayName.trim()) return;
@@ -36,7 +38,7 @@ export default function LandingPage() {
       localStorage.setItem('docsync_display_name', displayName);
     }
 
-    let targetUrl = `/${roomId}`;
+    let targetUrl = `/${finalRoomId}`;
     if (isPrivate && password.trim()) {
       targetUrl += `?password=${encodeURIComponent(password)}`;
     }
@@ -111,8 +113,8 @@ export default function LandingPage() {
                   <div className="flex gap-2">
                     <input 
                       type="text" 
-                      value={roomId}
-                      onChange={(e) => setRoomId(e.target.value)}
+                      value={createRoomId}
+                      onChange={(e) => setCreateRoomId(e.target.value)}
                       placeholder="Custom room slug"
                       className="w-full bg-black/20 border border-white/5 rounded-xl px-5 py-3.5 text-white font-mono text-sm placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all"
                     />
@@ -179,9 +181,9 @@ export default function LandingPage() {
                   <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500 ml-1">Paste Vault ID</label>
                   <input 
                     type="text" 
-                    value={roomId}
-                    onChange={(e) => setRoomId(e.target.value)}
-                    placeholder="e.g. ALPHA-Q3"
+                    value={joinRoomId}
+                    onChange={(e) => setJoinRoomId(e.target.value)}
+                    placeholder="e.g. ALPHA"
                     required
                     className="w-full bg-black/20 border border-white/5 rounded-xl px-5 py-4 text-center text-white font-mono text-xl tracking-[0.2em] placeholder-slate-700/50 focus:outline-none focus:ring-2 focus:ring-cyan-500/50 transition-all"
                   />
