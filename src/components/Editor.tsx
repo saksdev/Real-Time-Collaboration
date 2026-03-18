@@ -153,7 +153,7 @@ function EditorInner({ ydoc, provider, displayName, color, roomId, onExit, onCop
         event.preventDefault();
         onClick();
       }}
-      className={`p-3 sm:p-2 rounded-lg transition-all duration-200 group relative ${
+      className={`shrink-0 p-3 sm:p-2 rounded-lg transition-all duration-200 group relative ${
         isActive 
           ? 'bg-indigo-500 text-white shadow-lg shadow-indigo-500/20 scale-105' 
           : theme === 'dark' 
@@ -182,7 +182,7 @@ function EditorInner({ ydoc, provider, displayName, color, roomId, onExit, onCop
               className={`glass-toolbar rounded-2xl flex items-center gap-1 max-w-[min(1100px,100%)] overflow-x-auto mx-auto p-1.5 ${theme === 'light' ? 'bg-white/90 border-slate-200 shadow-xl' : 'bg-slate-900/80 border-white/10 shadow-2xl'}`}
               style={{ scrollbarWidth: 'none' }}
             >
-              <div className="flex items-center gap-0.5 px-2 text-slate-400">
+              <div className="flex shrink-0 items-center gap-0.5 px-2 text-slate-400">
                 <ToolbarButton onClick={() => editor.chain().focus().undo().run()} title="Undo (Ctrl+Z)">
                   <Undo2 size={18} />
                 </ToolbarButton>
@@ -190,7 +190,7 @@ function EditorInner({ ydoc, provider, displayName, color, roomId, onExit, onCop
                   <Redo2 size={18} />
                 </ToolbarButton>
 
-                <div className={`w-px h-6 mx-1 ${theme === 'light' ? 'bg-slate-200' : 'bg-white/10'}`}></div>
+                <div className={`shrink-0 w-px h-6 mx-1 ${theme === 'light' ? 'bg-slate-200' : 'bg-white/10'}`}></div>
 
                 <ToolbarButton onClick={() => editor.chain().focus().toggleBold().run()} isActive={editor.isActive('bold')} title="Bold">
                   <Bold size={18} />
@@ -205,7 +205,7 @@ function EditorInner({ ydoc, provider, displayName, color, roomId, onExit, onCop
 
               <div className={`w-px h-6 mx-1 ${theme === 'light' ? 'bg-slate-200' : 'bg-white/10'}`}></div>
 
-              <div className="flex items-center gap-0.5 px-2">
+              <div className="flex shrink-0 items-center gap-0.5 px-2">
                 <ToolbarButton onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()} isActive={editor.isActive('heading', { level: 1 })} title="Heading 1">
                   <Heading1 size={18} />
                 </ToolbarButton>
@@ -216,7 +216,7 @@ function EditorInner({ ydoc, provider, displayName, color, roomId, onExit, onCop
 
               <div className={`w-px h-6 mx-1 ${theme === 'light' ? 'bg-slate-200' : 'bg-white/10'}`}></div>
 
-              <div className="flex items-center gap-0.5 px-2">
+              <div className="flex shrink-0 items-center gap-0.5 px-2">
                 <ToolbarButton onClick={() => editor.chain().focus().toggleBulletList().run()} isActive={editor.isActive('bulletList')} title="Bullet List">
                   <List size={18} />
                 </ToolbarButton>
@@ -230,7 +230,7 @@ function EditorInner({ ydoc, provider, displayName, color, roomId, onExit, onCop
 
               <div className={`w-px h-6 mx-1 ${theme === 'light' ? 'bg-slate-200' : 'bg-white/10'}`}></div>
 
-              <div className="flex items-center gap-0.5 px-2">
+              <div className="flex shrink-0 items-center gap-0.5 px-2">
                 <ToolbarButton onClick={() => editor.chain().focus().toggleCode().run()} isActive={editor.isActive('code')} title="Inline Code">
                   <Code size={18} />
                 </ToolbarButton>
@@ -238,7 +238,7 @@ function EditorInner({ ydoc, provider, displayName, color, roomId, onExit, onCop
                   <Code2 size={18} />
                 </ToolbarButton>
 
-                <div className={`w-px h-6 mx-1 ${theme === 'light' ? 'bg-slate-200' : 'bg-white/10'}`}></div>
+                <div className={`shrink-0 w-px h-6 mx-1 ${theme === 'light' ? 'bg-slate-200' : 'bg-white/10'}`}></div>
 
                 <ToolbarButton onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')} title={theme === 'dark' ? 'Light Mode' : 'Dark Mode'}>
                   {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
@@ -247,7 +247,7 @@ function EditorInner({ ydoc, provider, displayName, color, roomId, onExit, onCop
 
               <div className={`w-px h-6 mx-1 ${theme === 'light' ? 'bg-slate-200' : 'bg-white/10'}`}></div>
 
-              <div className="px-4 flex items-center gap-2">
+              <div className="shrink-0 px-4 flex items-center gap-2">
                 <div className={`w-2 h-2 rounded-full transition-all duration-500 ${statusDisplay.color}`}></div>
                 <span className={`text-[10px] font-bold uppercase tracking-widest min-w-[70px] ${theme === 'light' ? 'text-slate-500' : 'text-slate-400'}`}>
                   {statusDisplay.label}

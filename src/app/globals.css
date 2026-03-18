@@ -115,6 +115,8 @@
   line-height: 1.8;
   color: inherit;
   background: transparent;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .light-theme .ProseMirror {
