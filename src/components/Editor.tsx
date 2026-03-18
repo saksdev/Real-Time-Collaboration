@@ -175,7 +175,7 @@ function EditorInner({ ydoc, provider, displayName, color, roomId, onExit, onCop
     <div className={`h-full w-full ${theme === 'light' ? 'light-theme' : ''} transition-colors duration-500`}>
       <div className="relative flex h-full w-full overflow-hidden animate-in fade-in duration-500">
         {/* LEFT: full-height editor area */}
-        <div className="relative flex-1 h-full flex flex-col">
+        <div className="relative flex-1 min-w-0 h-full flex flex-col">
           {/* Top command/format bar attached to editor */}
           <div className="px-3 pt-3 pb-2">
             <div
