@@ -1,0 +1,467 @@
+
+> realtime-clob@0.1.0 lint
+> eslint
+
+
+E:\Temp Projects\Real Time Clob\realtime-clob\src\app\[roomId]\page.tsx
+  87:7  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+E:\Temp Projects\Real Time Clob\realtime-clob\src\app\[roomId]\page.tsx:87:7
+  85 |     const storedName = localStorage.getItem('docsync_display_name');
+  86 |     if (!storedName) {
+> 87 |       setShowNameModal(true);
+     |       ^^^^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  88 |     } else {
+  89 |       setDisplayName(storedName);
+  90 |       let storedColor = localStorage.getItem('docsync_color');  react-hooks/set-state-in-effect
+
+E:\Temp Projects\Real Time Clob\realtime-clob\src\app\page.tsx
+  18:5  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+E:\Temp Projects\Real Time Clob\realtime-clob\src\app\page.tsx:18:5
+  16 |
+  17 |   useEffect(() => {
+> 18 |     setIsMounted(true);
+     |     ^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  19 |     const storedName = localStorage.getItem('docsync_display_name');
+  20 |     if (storedName) setDisplayName(storedName);
+  21 |     setRoomId(uuidv4().substring(0, 8));  react-hooks/set-state-in-effect
+
+E:\Temp Projects\Real Time Clob\realtime-clob\src\components\Editor.tsx
+   87:5   error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+E:\Temp Projects\Real Time Clob\realtime-clob\src\components\Editor.tsx:87:5
+  85 |     provider.awareness.on('change', handlePeers);
+  86 |
+> 87 |     setPeerCount(provider.awareness.getStates().size);
+     |     ^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  88 |
+  89 |     return () => {
+  90 |       provider.off('synced', handleSync);                                                                                                                                                                                                                                                                                                                                                                 react-hooks/set-state-in-effect
+  186:18  error  Error: Cannot create components during render
+
+Components created during render will reset their state each time they are created. Declare components outside of render.
+
+E:\Temp Projects\Real Time Clob\realtime-clob\src\components\Editor.tsx:186:18
+  184 |             >
+  185 |               <div className="flex items-center gap-0.5 px-2 text-slate-400">
+> 186 |                 <ToolbarButton onClick={() => editor.chain().focus().undo().run()} title="Undo (Ctrl+Z)">
+      |                  ^^^^^^^^^^^^^ This component is created during render
+  187 |                   <Undo2 size={18} />
+  188 |                 </ToolbarButton>
+  189 |                 <ToolbarButton onClick={() => editor.chain().focus().redo().run()} title="Redo (Ctrl+Y)">
+
+E:\Temp Projects\Real Time Clob\realtime-clob\src\components\Editor.tsx:138:25
+  136 |   };
+  137 |
+> 138 |   const ToolbarButton = ({ 
+      |                         ^^^
+> 139 |     onClick, 
+      | ^^^^^^^^^^^^^
+> 140 |     isActive = false, 
+      ΓÇª
+      | ^^^^^^^^^^^^^
+> 169 |     </button>
+      | ^^^^^^^^^^^^^
+> 170 |   );
+      | ^^^^ The component is created during render here
+  171 |
+  172 |   const activePeers = Array.from(provider.awareness.getStates().values()) as { user?: { name: string; color: string } }[];
+  173 |                                                                                                                  react-hooks/static-components
+  189:18  error  Error: Cannot create components during render
+
+Components created during render will reset their state each time they are created. Declare components outside of render.
+
+E:\Temp Projects\Real Time Clob\realtime-clob\src\components\Editor.tsx:189:18
+  187 |                   <Undo2 size={18} />
+  188 |                 </ToolbarButton>
+> 189 |                 <ToolbarButton onClick={() => editor.chain().focus().redo().run()} title="Redo (Ctrl+Y)">
+      |                  ^^^^^^^^^^^^^ This component is created during render
+  190 |                   <Redo2 size={18} />
+  191 |                 </ToolbarButton>
+  192 |
+
+E:\Temp Projects\Real Time Clob\realtime-clob\src\components\Editor.tsx:138:25
+  136 |   };
+  137 |
+> 138 |   const ToolbarButton = ({ 
+      |                         ^^^
+> 139 |     onClick, 
+      | ^^^^^^^^^^^^^
+> 140 |     isActive = false, 
+      ΓÇª
+      | ^^^^^^^^^^^^^
+> 169 |     </button>
+      | ^^^^^^^^^^^^^
+> 170 |   );
+      | ^^^^ The component is created during render here
+  171 |
+  172 |   const activePeers = Array.from(provider.awareness.getStates().values()) as { user?: { name: string; color: string } }[];
+  173 |                                                                                                                                                                                                                                                 react-hooks/static-components
+  195:18  error  Error: Cannot create components during render
+
+Components created during render will reset their state each time they are created. Declare components outside of render.
+
+E:\Temp Projects\Real Time Clob\realtime-clob\src\components\Editor.tsx:195:18
+  193 |                 <div className={`w-px h-6 mx-1 ${theme === 'light' ? 'bg-slate-200' : 'bg-white/10'}`}></div>
+  194 |
+> 195 |                 <ToolbarButton onClick={() => editor.chain().focus().toggleBold().run()} isActive={editor.isActive('bold')} title="Bold">
+      |                  ^^^^^^^^^^^^^ This component is created during render
+  196 |                   <Bold size={18} />
+  197 |                 </ToolbarButton>
+  198 |                 <ToolbarButton onClick={() => editor.chain().focus().toggleItalic().run()} isActive={editor.isActive('italic')} title="Italic">
+
+E:\Temp Projects\Real Time Clob\realtime-clob\src\components\Editor.tsx:138:25
+  136 |   };
+  137 |
+> 138 |   const ToolbarButton = ({ 
+      |                         ^^^
+> 139 |     onClick, 
+      | ^^^^^^^^^^^^^
+> 140 |     isActive = false, 
+      ΓÇª
+      | ^^^^^^^^^^^^^
+> 169 |     </button>
+      | ^^^^^^^^^^^^^
+> 170 |   );
+      | ^^^^ The component is created during render here
+  171 |
+  172 |   const activePeers = Array.from(provider.awareness.getStates().values()) as { user?: { name: string; color: string } }[];
+  173 |                           react-hooks/static-components
+  198:18  error  Error: Cannot create components during render
+
+Components created during render will reset their state each time they are created. Declare components outside of render.
+
+E:\Temp Projects\Real Time Clob\realtime-clob\src\components\Editor.tsx:198:18
+  196 |                   <Bold size={18} />
+  197 |                 </ToolbarButton>
+> 198 |                 <ToolbarButton onClick={() => editor.chain().focus().toggleItalic().run()} isActive={editor.isActive('italic')} title="Italic">
+      |                  ^^^^^^^^^^^^^ This component is created during render
+  199 |                   <Italic size={18} />
+  200 |                 </ToolbarButton>
+  201 |                 <ToolbarButton onClick={() => editor.chain().focus().toggleStrike().run()} isActive={editor.isActive('strike')} title="Strikethrough">
+
+E:\Temp Projects\Real Time Clob\realtime-clob\src\components\Editor.tsx:138:25
+  136 |   };
+  137 |
+> 138 |   const ToolbarButton = ({ 
+      |                         ^^^
+> 139 |     onClick, 
+      | ^^^^^^^^^^^^^
+> 140 |     isActive = false, 
+      ΓÇª
+      | ^^^^^^^^^^^^^
+> 169 |     </button>
+      | ^^^^^^^^^^^^^
+> 170 |   );
+      | ^^^^ The component is created during render here
+  171 |
+  172 |   const activePeers = Array.from(provider.awareness.getStates().values()) as { user?: { name: string; color: string } }[];
+  173 |                                                    react-hooks/static-components
+  201:18  error  Error: Cannot create components during render
+
+Components created during render will reset their state each time they are created. Declare components outside of render.
+
+E:\Temp Projects\Real Time Clob\realtime-clob\src\components\Editor.tsx:201:18
+  199 |                   <Italic size={18} />
+  200 |                 </ToolbarButton>
+> 201 |                 <ToolbarButton onClick={() => editor.chain().focus().toggleStrike().run()} isActive={editor.isActive('strike')} title="Strikethrough">
+      |                  ^^^^^^^^^^^^^ This component is created during render
+  202 |                   <Strikethrough size={18} />
+  203 |                 </ToolbarButton>
+  204 |               </div>
+
+E:\Temp Projects\Real Time Clob\realtime-clob\src\components\Editor.tsx:138:25
+  136 |   };
+  137 |
+> 138 |   const ToolbarButton = ({ 
+      |                         ^^^
+> 139 |     onClick, 
+      | ^^^^^^^^^^^^^
+> 140 |     isActive = false, 
+      ΓÇª
+      | ^^^^^^^^^^^^^
+> 169 |     </button>
+      | ^^^^^^^^^^^^^
+> 170 |   );
+      | ^^^^ The component is created during render here
+  171 |
+  172 |   const activePeers = Array.from(provider.awareness.getStates().values()) as { user?: { name: string; color: string } }[];
+  173 |                                                                                                                                                                      react-hooks/static-components
+  209:18  error  Error: Cannot create components during render
+
+Components created during render will reset their state each time they are created. Declare components outside of render.
+
+E:\Temp Projects\Real Time Clob\realtime-clob\src\components\Editor.tsx:209:18
+  207 |
+  208 |               <div className="flex items-center gap-0.5 px-2">
+> 209 |                 <ToolbarButton onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()} isActive={editor.isActive('heading', { level: 1 })} title="Heading 1">
+      |                  ^^^^^^^^^^^^^ This component is created during render
+  210 |                   <Heading1 size={18} />
+  211 |                 </ToolbarButton>
+  212 |                 <ToolbarButton onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()} isActive={editor.isActive('heading', { level: 2 })} title="Heading 2">
+
+E:\Temp Projects\Real Time Clob\realtime-clob\src\components\Editor.tsx:138:25
+  136 |   };
+  137 |
+> 138 |   const ToolbarButton = ({ 
+      |                         ^^^
+> 139 |     onClick, 
+      | ^^^^^^^^^^^^^
+> 140 |     isActive = false, 
+      ΓÇª
+      | ^^^^^^^^^^^^^
+> 169 |     </button>
+      | ^^^^^^^^^^^^^
+> 170 |   );
+      | ^^^^ The component is created during render here
+  171 |
+  172 |   const activePeers = Array.from(provider.awareness.getStates().values()) as { user?: { name: string; color: string } }[];
+  173 |  react-hooks/static-components
+  212:18  error  Error: Cannot create components during render
+
+Components created during render will reset their state each time they are created. Declare components outside of render.
+
+E:\Temp Projects\Real Time Clob\realtime-clob\src\components\Editor.tsx:212:18
+  210 |                   <Heading1 size={18} />
+  211 |                 </ToolbarButton>
+> 212 |                 <ToolbarButton onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()} isActive={editor.isActive('heading', { level: 2 })} title="Heading 2">
+      |                  ^^^^^^^^^^^^^ This component is created during render
+  213 |                   <Heading2 size={18} />
+  214 |                 </ToolbarButton>
+  215 |               </div>
+
+E:\Temp Projects\Real Time Clob\realtime-clob\src\components\Editor.tsx:138:25
+  136 |   };
+  137 |
+> 138 |   const ToolbarButton = ({ 
+      |                         ^^^
+> 139 |     onClick, 
+      | ^^^^^^^^^^^^^
+> 140 |     isActive = false, 
+      ΓÇª
+      | ^^^^^^^^^^^^^
+> 169 |     </button>
+      | ^^^^^^^^^^^^^
+> 170 |   );
+      | ^^^^ The component is created during render here
+  171 |
+  172 |   const activePeers = Array.from(provider.awareness.getStates().values()) as { user?: { name: string; color: string } }[];
+  173 |                                                                                                                                                 react-hooks/static-components
+  220:18  error  Error: Cannot create components during render
+
+Components created during render will reset their state each time they are created. Declare components outside of render.
+
+E:\Temp Projects\Real Time Clob\realtime-clob\src\components\Editor.tsx:220:18
+  218 |
+  219 |               <div className="flex items-center gap-0.5 px-2">
+> 220 |                 <ToolbarButton onClick={() => editor.chain().focus().toggleBulletList().run()} isActive={editor.isActive('bulletList')} title="Bullet List">
+      |                  ^^^^^^^^^^^^^ This component is created during render
+  221 |                   <List size={18} />
+  222 |                 </ToolbarButton>
+  223 |                 <ToolbarButton onClick={() => editor.chain().focus().toggleOrderedList().run()} isActive={editor.isActive('orderedList')} title="Ordered List">
+
+E:\Temp Projects\Real Time Clob\realtime-clob\src\components\Editor.tsx:138:25
+  136 |   };
+  137 |
+> 138 |   const ToolbarButton = ({ 
+      |                         ^^^
+> 139 |     onClick, 
+      | ^^^^^^^^^^^^^
+> 140 |     isActive = false, 
+      ΓÇª
+      | ^^^^^^^^^^^^^
+> 169 |     </button>
+      | ^^^^^^^^^^^^^
+> 170 |   );
+      | ^^^^ The component is created during render here
+  171 |
+  172 |   const activePeers = Array.from(provider.awareness.getStates().values()) as { user?: { name: string; color: string } }[];
+  173 |                                       react-hooks/static-components
+  223:18  error  Error: Cannot create components during render
+
+Components created during render will reset their state each time they are created. Declare components outside of render.
+
+E:\Temp Projects\Real Time Clob\realtime-clob\src\components\Editor.tsx:223:18
+  221 |                   <List size={18} />
+  222 |                 </ToolbarButton>
+> 223 |                 <ToolbarButton onClick={() => editor.chain().focus().toggleOrderedList().run()} isActive={editor.isActive('orderedList')} title="Ordered List">
+      |                  ^^^^^^^^^^^^^ This component is created during render
+  224 |                   <ListOrdered size={18} />
+  225 |                 </ToolbarButton>
+  226 |                 <ToolbarButton onClick={() => editor.chain().focus().toggleBlockquote().run()} isActive={editor.isActive('blockquote')} title="Blockquote">
+
+E:\Temp Projects\Real Time Clob\realtime-clob\src\components\Editor.tsx:138:25
+  136 |   };
+  137 |
+> 138 |   const ToolbarButton = ({ 
+      |                         ^^^
+> 139 |     onClick, 
+      | ^^^^^^^^^^^^^
+> 140 |     isActive = false, 
+      ΓÇª
+      | ^^^^^^^^^^^^^
+> 169 |     </button>
+      | ^^^^^^^^^^^^^
+> 170 |   );
+      | ^^^^ The component is created during render here
+  171 |
+  172 |   const activePeers = Array.from(provider.awareness.getStates().values()) as { user?: { name: string; color: string } }[];
+  173 |                          react-hooks/static-components
+  226:18  error  Error: Cannot create components during render
+
+Components created during render will reset their state each time they are created. Declare components outside of render.
+
+E:\Temp Projects\Real Time Clob\realtime-clob\src\components\Editor.tsx:226:18
+  224 |                   <ListOrdered size={18} />
+  225 |                 </ToolbarButton>
+> 226 |                 <ToolbarButton onClick={() => editor.chain().focus().toggleBlockquote().run()} isActive={editor.isActive('blockquote')} title="Blockquote">
+      |                  ^^^^^^^^^^^^^ This component is created during render
+  227 |                   <Quote size={18} />
+  228 |                 </ToolbarButton>
+  229 |               </div>
+
+E:\Temp Projects\Real Time Clob\realtime-clob\src\components\Editor.tsx:138:25
+  136 |   };
+  137 |
+> 138 |   const ToolbarButton = ({ 
+      |                         ^^^
+> 139 |     onClick, 
+      | ^^^^^^^^^^^^^
+> 140 |     isActive = false, 
+      ΓÇª
+      | ^^^^^^^^^^^^^
+> 169 |     </button>
+      | ^^^^^^^^^^^^^
+> 170 |   );
+      | ^^^^ The component is created during render here
+  171 |
+  172 |   const activePeers = Array.from(provider.awareness.getStates().values()) as { user?: { name: string; color: string } }[];
+  173 |                                                                                                                                                                    react-hooks/static-components
+  234:18  error  Error: Cannot create components during render
+
+Components created during render will reset their state each time they are created. Declare components outside of render.
+
+E:\Temp Projects\Real Time Clob\realtime-clob\src\components\Editor.tsx:234:18
+  232 |
+  233 |               <div className="flex items-center gap-0.5 px-2">
+> 234 |                 <ToolbarButton onClick={() => editor.chain().focus().toggleCode().run()} isActive={editor.isActive('code')} title="Inline Code">
+      |                  ^^^^^^^^^^^^^ This component is created during render
+  235 |                   <Code size={18} />
+  236 |                 </ToolbarButton>
+  237 |                 <ToolbarButton onClick={() => editor.chain().focus().toggleCodeBlock().run()} isActive={editor.isActive('codeBlock')} title="Code Block">
+
+E:\Temp Projects\Real Time Clob\realtime-clob\src\components\Editor.tsx:138:25
+  136 |   };
+  137 |
+> 138 |   const ToolbarButton = ({ 
+      |                         ^^^
+> 139 |     onClick, 
+      | ^^^^^^^^^^^^^
+> 140 |     isActive = false, 
+      ΓÇª
+      | ^^^^^^^^^^^^^
+> 169 |     </button>
+      | ^^^^^^^^^^^^^
+> 170 |   );
+      | ^^^^ The component is created during render here
+  171 |
+  172 |   const activePeers = Array.from(provider.awareness.getStates().values()) as { user?: { name: string; color: string } }[];
+  173 |                                                         react-hooks/static-components
+  237:18  error  Error: Cannot create components during render
+
+Components created during render will reset their state each time they are created. Declare components outside of render.
+
+E:\Temp Projects\Real Time Clob\realtime-clob\src\components\Editor.tsx:237:18
+  235 |                   <Code size={18} />
+  236 |                 </ToolbarButton>
+> 237 |                 <ToolbarButton onClick={() => editor.chain().focus().toggleCodeBlock().run()} isActive={editor.isActive('codeBlock')} title="Code Block">
+      |                  ^^^^^^^^^^^^^ This component is created during render
+  238 |                   <Code2 size={18} />
+  239 |                 </ToolbarButton>
+  240 |
+
+E:\Temp Projects\Real Time Clob\realtime-clob\src\components\Editor.tsx:138:25
+  136 |   };
+  137 |
+> 138 |   const ToolbarButton = ({ 
+      |                         ^^^
+> 139 |     onClick, 
+      | ^^^^^^^^^^^^^
+> 140 |     isActive = false, 
+      ΓÇª
+      | ^^^^^^^^^^^^^
+> 169 |     </button>
+      | ^^^^^^^^^^^^^
+> 170 |   );
+      | ^^^^ The component is created during render here
+  171 |
+  172 |   const activePeers = Array.from(provider.awareness.getStates().values()) as { user?: { name: string; color: string } }[];
+  173 |                                                                                                                                                                                                  react-hooks/static-components
+  243:18  error  Error: Cannot create components during render
+
+Components created during render will reset their state each time they are created. Declare components outside of render.
+
+E:\Temp Projects\Real Time Clob\realtime-clob\src\components\Editor.tsx:243:18
+  241 |                 <div className={`w-px h-6 mx-1 ${theme === 'light' ? 'bg-slate-200' : 'bg-white/10'}`}></div>
+  242 |
+> 243 |                 <ToolbarButton onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')} title={theme === 'dark' ? 'Light Mode' : 'Dark Mode'}>
+      |                  ^^^^^^^^^^^^^ This component is created during render
+  244 |                   {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
+  245 |                 </ToolbarButton>
+  246 |               </div>
+
+E:\Temp Projects\Real Time Clob\realtime-clob\src\components\Editor.tsx:138:25
+  136 |   };
+  137 |
+> 138 |   const ToolbarButton = ({ 
+      |                         ^^^
+> 139 |     onClick, 
+      | ^^^^^^^^^^^^^
+> 140 |     isActive = false, 
+      ΓÇª
+      | ^^^^^^^^^^^^^
+> 169 |     </button>
+      | ^^^^^^^^^^^^^
+> 170 |   );
+      | ^^^^ The component is created during render here
+  171 |
+  172 |   const activePeers = Array.from(provider.awareness.getStates().values()) as { user?: { name: string; color: string } }[];
+  173 |                                                                                                   react-hooks/static-components
+  465:5   error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+E:\Temp Projects\Real Time Clob\realtime-clob\src\components\Editor.tsx:465:5
+  463 |     console.log(`[Collab] Starting session for ${roomId} (ClientID: ${doc.clientID})`);
+  464 |     
+> 465 |     setCollabData({ ydoc: doc, provider: webrtcProvider });
+      |     ^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  466 |
+  467 |     return () => {
+  468 |       console.log(`[Collab] Session terminated for ${roomId}`);                                                                                                                                                                                                                                                                                  react-hooks/set-state-in-effect
+
+Γ£û 17 problems (17 errors, 0 warnings)
+
