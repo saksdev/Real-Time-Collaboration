@@ -19,17 +19,17 @@ export default function LandingPage() {
     setIsMounted(true);
     const storedName = localStorage.getItem('docsync_display_name');
     if (storedName) setDisplayName(storedName);
-    setCreateRoomId(uuidv4().substring(0, 5));
+    setCreateRoomId(uuidv4().substring(0, 5).toUpperCase());
   }, []);
 
   const handleGenerateRoomId = () => {
-    setCreateRoomId(uuidv4().substring(0, 5));
+    setCreateRoomId(uuidv4().substring(0, 5).toUpperCase());
   };
 
   const handleEnterWorkspace = (e: React.FormEvent) => {
     e.preventDefault();
-    const finalRoomId = activeTab === 'create' ? createRoomId : joinRoomId;
-    if (!finalRoomId.trim()) return;
+    const finalRoomId = (activeTab === 'create' ? createRoomId : joinRoomId).trim().toUpperCase();
+    if (!finalRoomId) return;
     
     // Only require name for "create" or if not already stored
     if (activeTab === 'create' && !displayName.trim()) return;
@@ -114,7 +114,7 @@ export default function LandingPage() {
                     <input 
                       type="text" 
                       value={createRoomId}
-                      onChange={(e) => setCreateRoomId(e.target.value)}
+                      onChange={(e) => setCreateRoomId(e.target.value.toUpperCase())}
                       placeholder="Custom room slug"
                       className="w-full bg-black/20 border border-white/5 rounded-xl px-5 py-3.5 text-white font-mono text-sm placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all"
                     />
@@ -182,7 +182,7 @@ export default function LandingPage() {
                   <input 
                     type="text" 
                     value={joinRoomId}
-                    onChange={(e) => setJoinRoomId(e.target.value)}
+                    onChange={(e) => setJoinRoomId(e.target.value.toUpperCase())}
                     placeholder="e.g. ALPHA"
                     required
                     className="w-full bg-black/20 border border-white/5 rounded-xl px-5 py-4 text-center text-white font-mono text-xl tracking-[0.2em] placeholder-slate-700/50 focus:outline-none focus:ring-2 focus:ring-cyan-500/50 transition-all"

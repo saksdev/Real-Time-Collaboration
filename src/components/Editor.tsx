@@ -433,7 +433,7 @@ export default function Editor(props: EditorProps) {
     const doc = new Y.Doc();
     
     // Significantly expanded signaling list for global fallback support
-    const webrtcProvider = new WebrtcProvider(`docsync-v2-room-${roomId}`, doc, {
+    const webrtcProvider = new WebrtcProvider(`docsync-v2-room-${roomId.trim().toUpperCase()}`, doc, {
       password: password || undefined,
       signaling: [
         'wss://signaling.yjs.dev',
