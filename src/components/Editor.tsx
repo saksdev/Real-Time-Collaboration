@@ -89,6 +89,62 @@ function EditorInner({ ydoc, provider, displayName, color, onExit, onCopyInviteL
     return () => clearTimeout(timer);
   }, [toast]);
 
+  // Network Diagnostics
+  const [diagnostics, setDiagnostics] = useState({
+    webrtcSupported: false,
+    connectedSignalingCount: 0,
+    totalSignalingCount: 0,
+    signalingStates: [] as { url: string; state: string }[]
+  });
+
+  useEffect(() => {
+    setDiagnostics(prev => ({
+      ...prev,
+      webrtcSupported: typeof window !== 'undefined' && !!window.RTCPeerConnection
+    }));
+  }, []);
+
+  useEffect(() => {
+    if (!provider) return;
+
+    const checkConnections = () => {
+      const conns = (provider as any).signalingConns || [];
+      let openCount = 0;
+      const states = conns.map((ws: any) => {
+        let stateStr = 'CLOSED';
+        if (ws.readyState === 0) stateStr = 'CONNECTING';
+        else if (ws.readyState === 1) {
+          stateStr = 'CONNECTED';
+          openCount++;
+        }
+        else if (ws.readyState === 2) stateStr = 'CLOSING';
+        
+        let displayUrl = 'Signaling Server';
+        try {
+          if (ws.url) displayUrl = new URL(ws.url).hostname;
+        } catch {
+          displayUrl = ws.url || 'Signaling Server';
+        }
+
+        return {
+          url: displayUrl,
+          state: stateStr
+        };
+      });
+
+      setDiagnostics(prev => ({
+        ...prev,
+        connectedSignalingCount: openCount,
+        totalSignalingCount: conns.length,
+        signalingStates: states
+      }));
+    };
+
+    const interval = setInterval(checkConnections, 2000);
+    checkConnections();
+    return () => clearInterval(interval);
+  }, [provider]);
+
   // Send a chat message
   const handleSendChatMessage = (e: React.FormEvent) => {
     e.preventDefault();
@@ -662,8 +718,11 @@ function EditorInner({ ydoc, provider, displayName, color, onExit, onCopyInviteL
                   </form>
                 </div>
               ) : (
-                /* Collaborators List (full vertical scrollable) */
+                /* Collaborators List & Network Diagnostics */
                 <div className="flex-1 overflow-y-auto p-4 custom-scrollbar flex flex-col gap-2">
+                  <h3 className={`text-[10px] font-bold uppercase tracking-wider mb-1 ${theme === 'light' ? 'text-slate-500' : 'text-slate-400'}`}>
+                    Active Collaborators
+                  </h3>
                   {activePeers.length === 0 ? (
                     <div className="text-center py-4 text-slate-500 text-xs font-medium">
                       Waiting for connections...
@@ -696,6 +755,51 @@ function EditorInner({ ydoc, provider, displayName, color, onExit, onCopyInviteL
                       </div>
                     ))
                   )}
+
+                  {/* Network Diagnostics Panel */}
+                  <div className={`mt-6 pt-6 border-t ${theme === 'light' ? 'border-slate-200' : 'border-white/5'}`}>
+                    <h3 className={`text-[10px] font-bold uppercase tracking-wider mb-3 ${theme === 'light' ? 'text-slate-500' : 'text-slate-400'}`}>
+                      Network Diagnostics
+                    </h3>
+                    <div className="flex flex-col gap-2.5">
+                      {/* WebRTC Support */}
+                      <div className="flex items-center justify-between text-xs">
+                        <span className="text-slate-500">WebRTC API:</span>
+                        {diagnostics.webrtcSupported ? (
+                          <span className="font-bold text-green-500 flex items-center gap-1">🟢 Available</span>
+                        ) : (
+                          <span className="font-bold text-red-500 flex items-center gap-1" title="Requires HTTPS or localhost to run WebRTC">🔴 Blocked</span>
+                        )}
+                      </div>
+                      
+                      {/* Insecure Context Warning */}
+                      {!diagnostics.webrtcSupported && (
+                        <div className="bg-red-500/10 border border-red-500/20 text-red-400 p-2.5 rounded-lg text-[10px] leading-normal font-medium">
+                          ⚠️ <strong>WebRTC requires HTTPS:</strong> Mobile browsers block WebRTC when accessed via insecure <code>http://10.62.38.85</code>. Please use the secure **Vercel HTTPS link** or run on localhost!
+                        </div>
+                      )}
+
+                      {/* Signaling Status */}
+                      <div className="flex items-center justify-between text-xs">
+                        <span className="text-slate-500">Signaling Connection:</span>
+                        <span className={`font-bold font-mono ${diagnostics.connectedSignalingCount > 0 ? 'text-green-500' : 'text-yellow-500'}`}>
+                          {diagnostics.connectedSignalingCount} / {diagnostics.totalSignalingCount} Connected
+                        </span>
+                      </div>
+
+                      {/* Signaling Server Status List */}
+                      <div className="flex flex-col gap-1.5 mt-1 max-h-36 overflow-y-auto pr-1 custom-scrollbar">
+                        {diagnostics.signalingStates.map((s, idx) => (
+                          <div key={idx} className="flex items-center justify-between text-[9px] font-mono">
+                            <span className="text-slate-500 truncate max-w-[170px]">{s.url}</span>
+                            <span className={`font-bold ${s.state === 'CONNECTED' ? 'text-green-500' : s.state === 'CONNECTING' ? 'text-yellow-500' : 'text-red-400'}`}>
+                              {s.state}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
                 </div>
               )}
 
