@@ -777,18 +777,18 @@ export default function Editor(props: EditorProps) {
             { urls: 'stun:stun.nextcloud.com:443' },
             {
               urls: 'turn:openrelay.metered.ca:80',
-              username: 'openrelay',
-              credential: 'openrelay'
+              username: 'openrelayproject',
+              credential: 'openrelayproject'
             },
             {
               urls: 'turn:openrelay.metered.ca:443',
-              username: 'openrelay',
-              credential: 'openrelay'
+              username: 'openrelayproject',
+              credential: 'openrelayproject'
             },
             {
               urls: 'turns:openrelay.metered.ca:443',
-              username: 'openrelay',
-              credential: 'openrelay'
+              username: 'openrelayproject',
+              credential: 'openrelayproject'
             }
           ]
         }
