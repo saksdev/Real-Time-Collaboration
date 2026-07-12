@@ -44,7 +44,7 @@ function EditorInner({ ydoc, provider, displayName, color, onExit, onCopyInviteL
   // Hardcoded Monaco IDE Settings
   const language = 'javascript';
   const [fontSize, setFontSize] = useState(14);
-  const [suggestionsEnabled, setSuggestionsEnabled] = useState(false);
+  const [suggestionsEnabled, setSuggestionsEnabled] = useState(true);
 
   // Editor stats & position
   const [editorInstance, setEditorInstance] = useState<editor.IStandaloneCodeEditor | null>(null);
@@ -760,12 +760,8 @@ export default function Editor(props: EditorProps) {
     // Significantly expanded signaling list for global fallback support
     const webrtcProvider = new WebrtcProvider(`docsync-v2-room-${roomId.trim().toUpperCase()}`, doc, {
       signaling: [
-        'wss://signaling.yjs.dev',
-        'wss://y-webrtc-signaling-eu.herokuapp.com',
-        'wss://y-webrtc-signaling-us.herokuapp.com',
-        'wss://y-webrtc.fly.dev',
         'wss://y-webrtc-signaling.onrender.com',
-        'wss://y-webrtc-backup.fly.dev'
+        'wss://y-webrtc.fly.dev'
       ],
       maxConns: 20 + Math.floor(Math.random() * 15),
       peerOpts: {
