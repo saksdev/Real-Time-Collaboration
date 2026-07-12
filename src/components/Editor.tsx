@@ -11,6 +11,14 @@ import {
 } from 'lucide-react';
 import type { editor } from 'monaco-editor';
 
+if (typeof window !== 'undefined') {
+  window.addEventListener('unhandledrejection', (event) => {
+    if (event.reason && (event.reason.name === 'Canceled' || event.reason.message === 'Canceled')) {
+      event.preventDefault();
+    }
+  });
+}
+
 interface EditorProps {
   roomId: string;
   displayName: string;
@@ -759,8 +767,22 @@ export default function Editor(props: EditorProps) {
   useEffect(() => {
     const doc = new Y.Doc();
     
+    const currentHostname = typeof window !== 'undefined' ? window.location.hostname : 'localhost';
+    let wsUrl = 'wss://demos.yjs.dev';
+
+    if (currentHostname === 'localhost' || currentHostname === '127.0.0.1') {
+      wsUrl = 'ws://localhost:1234';
+    } else if (
+      currentHostname.startsWith('10.') || 
+      currentHostname.startsWith('192.168.') || 
+      currentHostname.startsWith('172.') || 
+      (currentHostname.includes('.') && !currentHostname.endsWith('.vercel.app') && !currentHostname.endsWith('.com'))
+    ) {
+      wsUrl = `ws://${currentHostname}:1234`;
+    }
+
     const websocketProvider = new WebsocketProvider(
-      'wss://demos.yjs.dev',
+      wsUrl,
       `docsync-v2-room-${roomId.trim().toUpperCase()}`,
       doc
     );
