@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef } from 'react';
 import MonacoEditor, { Monaco } from '@monaco-editor/react';
 import * as Y from 'yjs';
-import { WebrtcProvider } from 'y-webrtc';
+import { WebsocketProvider } from 'y-websocket';
 import { MonacoBinding } from 'y-monaco';
 import { 
   Sun, Moon, Users, Link2, LogOut, Check, Type,
@@ -21,7 +21,7 @@ interface EditorProps {
 
 interface EditorInnerProps extends EditorProps {
   ydoc: Y.Doc;
-  provider: WebrtcProvider;
+  provider: WebsocketProvider;
 }
 
 type ConnectionStatus = 'connecting' | 'connected' | 'synced' | 'disconnected';
@@ -109,17 +109,19 @@ function EditorInner({ ydoc, provider, displayName, color, onExit, onCopyInviteL
   useEffect(() => {
     if (!provider) return;
 
-    const handleSync = ({ synced }: { synced: boolean }) => {
+    const handleSync = (synced: boolean) => {
       console.log(`[Collab] Document ${synced ? 'fully synced' : 'syncing...'}`);
       if (synced) setStatus('synced');
     };
 
-    const handleStatus = (event: { connected: boolean }) => {
-      console.log(`[Collab] Connection status:`, event.connected ? 'connected' : 'disconnected');
-      if (event.connected) {
+    const handleStatus = (event: { status: 'connected' | 'connecting' | 'disconnected' }) => {
+      console.log(`[Collab] Connection status:`, event.status);
+      if (event.status === 'connected') {
         setStatus('connected');
-      } else {
+      } else if (event.status === 'disconnected') {
         setStatus('disconnected');
+      } else {
+        setStatus('connecting');
       }
     };
 
@@ -128,14 +130,14 @@ function EditorInner({ ydoc, provider, displayName, color, onExit, onCopyInviteL
       setPeerCount(peers);
     };
 
-    provider.on('synced', handleSync);
+    provider.on('sync', handleSync);
     provider.on('status', handleStatus);
     provider.awareness.on('change', handlePeers);
 
     setPeerCount(provider.awareness.getStates().size);
 
     return () => {
-      provider.off('synced', handleSync);
+      provider.off('sync', handleSync);
       provider.off('status', handleStatus);
       provider.awareness.off('change', handlePeers);
     };
@@ -752,57 +754,29 @@ function EditorInner({ ydoc, provider, displayName, color, onExit, onCopyInviteL
 
 export default function Editor(props: EditorProps) {
   const { roomId, displayName, color } = props;
-  const [collabData, setCollabData] = useState<{ ydoc: Y.Doc; provider: WebrtcProvider } | null>(null);
+  const [collabData, setCollabData] = useState<{ ydoc: Y.Doc; provider: WebsocketProvider } | null>(null);
 
   useEffect(() => {
     const doc = new Y.Doc();
     
-    // Significantly expanded signaling list for global fallback support
-    const webrtcProvider = new WebrtcProvider(`docsync-v2-room-${roomId.trim().toUpperCase()}`, doc, {
-      signaling: [
-        'wss://y-webrtc-signaling.onrender.com',
-        'wss://y-webrtc.fly.dev'
-      ],
-      maxConns: 20 + Math.floor(Math.random() * 15),
-      peerOpts: {
-        config: {
-          iceServers: [
-            { urls: 'stun:stun.l.google.com:19302' },
-            { urls: 'stun:stun1.l.google.com:19302' },
-            { urls: 'stun:stun2.l.google.com:19302' },
-            { urls: 'stun:stun.nextcloud.com:443' },
-            {
-              urls: 'turn:openrelay.metered.ca:80',
-              username: 'openrelayproject',
-              credential: 'openrelayproject'
-            },
-            {
-              urls: 'turn:openrelay.metered.ca:443',
-              username: 'openrelayproject',
-              credential: 'openrelayproject'
-            },
-            {
-              urls: 'turns:openrelay.metered.ca:443',
-              username: 'openrelayproject',
-              credential: 'openrelayproject'
-            }
-          ]
-        }
-      }
-    });
+    const websocketProvider = new WebsocketProvider(
+      'wss://demos.yjs.dev',
+      `docsync-v2-room-${roomId.trim().toUpperCase()}`,
+      doc
+    );
 
-    webrtcProvider.awareness.setLocalStateField('user', {
+    websocketProvider.awareness.setLocalStateField('user', {
       name: displayName,
       color: color,
     });
 
     console.log(`[Collab] Starting session for ${roomId} (ClientID: ${doc.clientID})`);
     
-    setCollabData({ ydoc: doc, provider: webrtcProvider });
+    setCollabData({ ydoc: doc, provider: websocketProvider });
 
     return () => {
       console.log(`[Collab] Session terminated for ${roomId}`);
-      webrtcProvider.destroy();
+      websocketProvider.destroy();
       doc.destroy();
     };
   }, [roomId, displayName, color]);
