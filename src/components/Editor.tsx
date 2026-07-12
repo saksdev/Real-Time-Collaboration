@@ -44,7 +44,7 @@ function EditorInner({ ydoc, provider, displayName, color, onExit, onCopyInviteL
   // Hardcoded Monaco IDE Settings
   const language = 'javascript';
   const [fontSize, setFontSize] = useState(14);
-  const [suggestionsEnabled, setSuggestionsEnabled] = useState(true);
+  const [suggestionsEnabled, setSuggestionsEnabled] = useState(false);
 
   // Editor stats & position
   const [editorInstance, setEditorInstance] = useState<editor.IStandaloneCodeEditor | null>(null);
