@@ -194,7 +194,35 @@
   pointer-events: none;
 }
 
-/* Collaboration Cursors */
+/* Monaco Collaborative Cursors */
+.yRemoteSelection {
+  transition: background-color 0.2s;
+}
+
+.yRemoteSelectionHead {
+  position: absolute;
+  margin-left: -1px;
+  box-sizing: border-box;
+  height: 100%;
+}
+
+.yRemoteSelectionHead::after {
+  position: absolute;
+  top: -16px;
+  left: 0;
+  color: white;
+  font-size: 9px;
+  font-weight: bold;
+  padding: 0.5px 4px;
+  border-radius: 3px 3px 3px 0;
+  white-space: nowrap;
+  pointer-events: none;
+  font-family: system-ui, -apple-system, sans-serif;
+  line-height: normal;
+  z-index: 10;
+}
+
+/* TipTap Collaboration Cursors */
 .collaboration-cursor__caret {
   border-left: 2px solid;
   border-right: 2px solid;
@@ -218,4 +246,5 @@
   top: -1.4em;
   user-select: none;
   white-space: nowrap;
+  z-index: 10;
 }

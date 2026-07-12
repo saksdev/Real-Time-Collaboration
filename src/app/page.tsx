@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { RefreshCcw, Lock, Globe, ChevronRight } from 'lucide-react';
+import { RefreshCcw, ChevronRight } from 'lucide-react';
 import { v4 as uuidv4 } from 'uuid';
 
 export default function LandingPage() {
@@ -11,9 +11,6 @@ export default function LandingPage() {
   const [displayName, setDisplayName] = useState('');
   const [createRoomId, setCreateRoomId] = useState('');
   const [joinRoomId, setJoinRoomId] = useState('');
-  const [isPrivate, setIsPrivate] = useState(false);
-  const [password, setPassword] = useState('');
-  const [joinPassword, setJoinPassword] = useState('');
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
@@ -37,14 +34,6 @@ export default function LandingPage() {
 
     if (displayName.trim()) {
       localStorage.setItem('docsync_display_name', displayName);
-    }
-
-    // Securely pass password to the editor via session storage
-    const finalPassword = activeTab === 'create' ? (isPrivate ? password : '') : joinPassword;
-    if (finalPassword.trim()) {
-      sessionStorage.setItem('docsync_password', finalPassword.trim());
-    } else {
-      sessionStorage.removeItem('docsync_password');
     }
 
     router.push(`/${finalRoomId}`);
@@ -133,44 +122,7 @@ export default function LandingPage() {
                   </div>
                 </div>
 
-                {/* Privacy Options */}
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between mb-1 px-1">
-                    <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">Security</label>
-                    <span className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded leading-none ${isPrivate ? 'bg-pink-500/10 text-pink-500' : 'bg-cyan-500/10 text-cyan-500'}`}>
-                      {isPrivate ? 'Restricted' : 'Open Access'}
-                    </span>
-                  </div>
-                  <div className="grid grid-cols-2 gap-3 p-1 bg-white/5 rounded-xl border border-white/5">
-                    <button
-                      type="button"
-                      onClick={() => setIsPrivate(false)}
-                      className={`flex items-center justify-center gap-2 py-2.5 rounded-lg text-xs font-bold transition-all ${!isPrivate ? 'bg-white/10 text-white shadow-inner' : 'text-slate-500 hover:text-slate-300'}`}
-                    >
-                      <Globe size={14} /> Global
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setIsPrivate(true)}
-                      className={`flex items-center justify-center gap-2 py-2.5 rounded-lg text-xs font-bold transition-all ${isPrivate ? 'bg-white/10 text-white shadow-inner' : 'text-slate-500 hover:text-slate-300'}`}
-                    >
-                      <Lock size={14} /> Secure
-                    </button>
-                  </div>
-                </div>
 
-                {isPrivate && (
-                  <div className="space-y-2 animate-in slide-in-from-top-2 duration-300">
-                    <input 
-                      type="password" 
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      placeholder="Access Token Required"
-                      required
-                      className="w-full bg-pink-500/5 border border-pink-500/10 rounded-xl px-5 py-3.5 text-white placeholder-pink-500/30 focus:outline-none focus:ring-2 focus:ring-pink-500/30 transition-all font-medium"
-                    />
-                  </div>
-                )}
               </div>
             )}
 
@@ -193,16 +145,7 @@ export default function LandingPage() {
                   />
                 </div>
 
-                <div className="space-y-2">
-                  <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500 ml-1">Vault Key (Optional)</label>
-                  <input 
-                    type="password" 
-                    value={joinPassword}
-                    onChange={(e) => setJoinPassword(e.target.value)}
-                    placeholder="Leave blank if open access"
-                    className="w-full bg-black/20 border border-white/5 rounded-xl px-5 py-3.5 text-center text-white placeholder-slate-700/50 focus:outline-none focus:ring-2 focus:ring-cyan-500/50 transition-all font-medium"
-                  />
-                </div>
+
               </div>
             )}
 

@@ -39,3 +39,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Editor backups
+src/components/Editor.backup.tsx
+src/components/Editor.clean.tsx
+src/components/Editor.meet.tsx
+src/components/Editor.split.tsx

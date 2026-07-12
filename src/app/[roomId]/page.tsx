@@ -3,16 +3,27 @@
 import { use, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { User, ChevronRight } from 'lucide-react';
-import Editor from '@/components/Editor';
+import dynamic from 'next/dynamic';
 
-function NameEntryModal({ onJoin, roomId }: { onJoin: (name: string, password?: string) => void, roomId: string }) {
+const Editor = dynamic(() => import('@/components/Editor'), {
+  ssr: false,
+  loading: () => (
+    <div className="flex flex-col items-center justify-center h-screen bg-[#0d0d12] text-slate-400">
+      <div className="flex flex-col items-center gap-4">
+        <div className="w-12 h-12 border-4 border-indigo-500/20 border-t-indigo-500 rounded-full animate-spin"></div>
+        <p className="animate-pulse font-medium tracking-wide text-xs uppercase tracking-widest text-slate-400">Initializing Workspace...</p>
+      </div>
+    </div>
+  )
+});
+
+function NameEntryModal({ onJoin, roomId }: { onJoin: (name: string) => void, roomId: string }) {
   const [name, setName] = useState('');
-  const [password, setPassword] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (name.trim()) {
-      onJoin(name.trim(), password.trim() || undefined);
+      onJoin(name.trim());
     }
   };
 
@@ -46,17 +57,6 @@ function NameEntryModal({ onJoin, roomId }: { onJoin: (name: string, password?: 
                   className="w-full bg-black/20 border border-white/5 rounded-xl px-5 py-4 text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all font-medium"
                 />
               </div>
-
-              <div className="space-y-2">
-                <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500 ml-1">Vault Key (Optional)</label>
-                <input 
-                  type="password" 
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Leave blank if open access"
-                  className="w-full bg-black/20 border border-white/5 rounded-xl px-5 py-4 text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all font-medium"
-                />
-              </div>
             </div>
 
             <button 
@@ -78,28 +78,20 @@ function NameEntryModal({ onJoin, roomId }: { onJoin: (name: string, password?: 
 }
 
 export default function WorkspacePage({
-  params,
-  searchParams
+  params
 }: {
-  params: Promise<{ roomId: string }>,
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
+  params: Promise<{ roomId: string }>
 }) {
   const router = useRouter();
   const resolvedParams = use(params);
   const roomId = resolvedParams.roomId;
 
-  const [password, setPassword] = useState<string | undefined>(undefined);
   const [displayName, setDisplayName] = useState('');
   const [color, setColor] = useState('');
   const [isMounted, setIsMounted] = useState(false);
   const [showNameModal, setShowNameModal] = useState(false);
 
   useEffect(() => {
-    const sessionPassword = sessionStorage.getItem('docsync_password');
-    if (sessionPassword) {
-      setPassword(sessionPassword);
-      sessionStorage.removeItem('docsync_password');
-    }
 
     const storedName = localStorage.getItem('docsync_display_name');
     if (!storedName) {
@@ -117,8 +109,7 @@ export default function WorkspacePage({
     }
   }, []);
 
-  const handleJoin = (name: string, enteredPassword?: string) => {
-    if (enteredPassword) setPassword(enteredPassword);
+  const handleJoin = (name: string) => {
     localStorage.setItem('docsync_display_name', name);
     setDisplayName(name);
     setShowNameModal(false);
@@ -164,7 +155,6 @@ export default function WorkspacePage({
     <div className="h-[100dvh] w-screen bg-mesh text-slate-100 overflow-hidden font-sans">
       <Editor
         roomId={roomId}
-        password={password}
         displayName={displayName}
         color={color}
         onExit={handleExit}
