@@ -7,7 +7,7 @@ import { WebrtcProvider } from 'y-webrtc';
 import { MonacoBinding } from 'y-monaco';
 import { 
   Sun, Moon, Users, Link2, LogOut, Check, Type,
-  MessageSquare, Send, Sparkles
+  MessageSquare, Send, Sparkles, Menu, X
 } from 'lucide-react';
 import type { editor } from 'monaco-editor';
 
@@ -37,7 +37,8 @@ function EditorInner({ ydoc, provider, displayName, color, onExit, onCopyInviteL
   const [status, setStatus] = useState<ConnectionStatus>('connecting');
   const [peerCount, setPeerCount] = useState(0);
   const [theme, setTheme] = useState<'dark' | 'light'>('dark');
-  const [showPeerList, setShowPeerList] = useState(true);
+  const [showPeerList, setShowPeerList] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [toast, setToast] = useState<null | { message: string; kind?: 'success' | 'info' }>(null);
 
   // Hardcoded Monaco IDE Settings
@@ -307,25 +308,25 @@ function EditorInner({ ydoc, provider, displayName, color, onExit, onCopyInviteL
   return (
     <div className={`h-full w-full flex flex-col ${theme === 'light' ? 'bg-slate-50' : 'bg-[#0b0c10]'} overflow-hidden transition-colors duration-500`}>
       {/* HEADER SECTION */}
-      <header className={`px-6 py-4 flex items-center justify-between border-b shrink-0 ${
+      <header className={`px-3 sm:px-6 py-3 sm:py-4 flex items-center justify-between border-b shrink-0 ${
         theme === 'light' ? 'bg-white border-slate-200 shadow-sm' : 'bg-slate-900/40 border-white/5'
       }`}>
         {/* Left: Brand logo */}
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-500 to-cyan-400 flex items-center justify-center text-white font-black text-xl shadow-lg shadow-indigo-500/20 select-none">
+        <div className="flex items-center gap-2 sm:gap-4">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-tr from-indigo-500 to-cyan-400 flex items-center justify-center text-white font-black text-lg sm:text-xl shadow-lg shadow-indigo-500/20 select-none">
               D
             </div>
             <div className="flex flex-col">
-              <span className={`font-bold tracking-tight text-sm ${theme === 'light' ? 'text-slate-800' : 'text-white'}`}>
+              <span className={`font-bold tracking-tight text-xs sm:text-sm ${theme === 'light' ? 'text-slate-800' : 'text-white'}`}>
                 DocSync <span className="text-indigo-400">Workspace</span>
               </span>
-              <span className="text-[10px] text-slate-500 font-mono">collaborative editor</span>
+              <span className="hidden sm:block text-[10px] text-slate-500 font-mono">collaborative editor</span>
             </div>
           </div>
         </div>
 
-        {/* Center Section: Font size and Formatting */}
+        {/* Center Section: Font size and Formatting — hidden on mobile */}
         <div className="hidden md:flex items-center gap-2">
           {/* Font Size Selection */}
           <div className="flex items-center gap-1.5">
@@ -382,8 +383,20 @@ function EditorInner({ ydoc, provider, displayName, color, onExit, onCopyInviteL
         </div>
 
         {/* Right Side: Connections & Actions */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-1.5 sm:gap-3">
 
+          {/* Mobile menu button — shows hidden center controls on small screens */}
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className={`md:hidden p-2 rounded-lg transition-all border ${
+              theme === 'light'
+                ? 'bg-slate-100 hover:bg-slate-200 text-slate-600 border-slate-200'
+                : 'bg-white/5 hover:bg-white/10 text-slate-400 border-white/5'
+            }`}
+            title="Menu"
+          >
+            {mobileMenuOpen ? <X size={16} /> : <Menu size={16} />}
+          </button>
 
           {/* Theme Toggler */}
           <button
@@ -401,7 +414,7 @@ function EditorInner({ ydoc, provider, displayName, color, onExit, onCopyInviteL
           {/* Peer Count Button */}
           <button
             onClick={() => setShowPeerList(!showPeerList)}
-            className={`flex items-center gap-2 px-3.5 py-2 rounded-lg text-xs font-bold transition-all border ${
+            className={`flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3.5 py-2 rounded-lg text-xs font-bold transition-all border ${
               showPeerList 
                 ? 'bg-indigo-500/10 text-indigo-400 border-indigo-500/30' 
                 : theme === 'light'
@@ -443,6 +456,53 @@ function EditorInner({ ydoc, provider, displayName, color, onExit, onCopyInviteL
         </div>
       </header>
 
+      {/* MOBILE DROPDOWN MENU — center controls expanded for small screens */}
+      {mobileMenuOpen && (
+        <div className={`md:hidden flex items-center flex-wrap gap-2 px-3 py-2.5 border-b shrink-0 ${
+          theme === 'light' ? 'bg-slate-50 border-slate-200' : 'bg-slate-900/60 border-white/5'
+        }`}>
+          <div className="flex items-center gap-1.5">
+            <Type size={14} className="text-slate-400" />
+            <select
+              value={fontSize}
+              onChange={(e) => setFontSize(Number(e.target.value))}
+              className={`text-xs font-semibold py-1 px-2 rounded-md border focus:outline-none cursor-pointer ${
+                theme === 'light'
+                  ? 'bg-white border-slate-200 text-slate-700'
+                  : 'bg-slate-800/80 border-white/5 text-slate-300'
+              }`}
+            >
+              {[12, 13, 14, 15, 16, 18, 20].map((size) => (
+                <option key={size} value={size}>{size}px</option>
+              ))}
+            </select>
+          </div>
+          <button
+            onClick={() => { setSuggestionsEnabled(!suggestionsEnabled); }}
+            className={`text-xs font-semibold px-2.5 py-1.5 rounded-md transition-all flex items-center gap-1.5 border ${
+              suggestionsEnabled
+                ? 'bg-indigo-500 text-white border-indigo-400/20'
+                : theme === 'light'
+                  ? 'bg-white text-slate-700 border-slate-200'
+                  : 'bg-white/5 text-slate-300 border-white/5'
+            }`}
+          >
+            <Sparkles size={13} className={suggestionsEnabled ? 'animate-pulse text-yellow-300' : 'text-slate-400'} />
+            Suggestions
+          </button>
+          <button
+            onClick={formatDocument}
+            className={`text-xs font-semibold px-2.5 py-1.5 rounded-md transition-all border ${
+              theme === 'light'
+                ? 'bg-white text-slate-700 border-slate-200'
+                : 'bg-white/5 text-slate-300 border-white/5'
+            }`}
+          >
+            Format
+          </button>
+        </div>
+      )}
+
       {/* MAIN CONTENT AREA */}
       <main className="flex-1 w-full flex relative overflow-hidden">
         {/* Monaco Editor Container */}
@@ -483,15 +543,33 @@ function EditorInner({ ydoc, provider, displayName, color, onExit, onCopyInviteL
         {/* Sidebar / Active Users & Real-time Chat Drawer */}
         {showPeerList && (
           <>
+            {/* Mobile overlay backdrop */}
             <div 
-              className="absolute inset-0 bg-black/40 z-30 transition-opacity duration-300 md:hidden"
+              className="fixed inset-0 bg-black/50 z-30 md:hidden backdrop-blur-sm"
               onClick={() => setShowPeerList(false)}
             />
-            <aside className={`w-80 h-full border-l flex flex-col absolute right-0 top-0 z-40 md:relative md:translate-x-0 transition-transform duration-300 shadow-2xl md:shadow-none ${
-              theme === 'light' ? 'bg-white border-slate-200' : 'bg-[#0f111a] border-white/5'
-            }`}>
+            {/* Sidebar — bottom sheet on mobile, right panel on desktop */}
+            <aside className={`
+              fixed bottom-0 left-0 right-0 z-40 md:static md:z-auto
+              w-full md:w-80 
+              h-[70vh] md:h-full 
+              rounded-t-2xl md:rounded-none
+              border-t md:border-t-0 md:border-l 
+              flex flex-col 
+              shadow-2xl md:shadow-none 
+              transition-all duration-300
+              ${
+                theme === 'light' ? 'bg-white border-slate-200' : 'bg-[#0f111a] border-white/5'
+              }
+            `}>
+              {/* Mobile drag handle */}
+              <div className="md:hidden flex justify-center pt-2 pb-1 shrink-0">
+                <div className={`w-10 h-1 rounded-full ${theme === 'light' ? 'bg-slate-200' : 'bg-white/10'}`} />
+              </div>
               {/* Sidebar Tabs */}
-              <div className="px-2 py-1.5 border-b border-white/5 flex gap-1 shrink-0 bg-black/[0.05]">
+              <div className={`px-2 py-1.5 border-b flex gap-1 shrink-0 bg-black/[0.05] ${
+                theme === 'light' ? 'border-slate-200' : 'border-white/5'
+              }`}>
                 <button
                   onClick={() => setSidebarTab('chat')}
                   className={`flex-1 flex items-center justify-center gap-2 py-2 text-[10px] font-bold uppercase tracking-widest rounded-md transition-all ${
@@ -627,13 +705,13 @@ function EditorInner({ ydoc, provider, displayName, color, onExit, onCopyInviteL
       </main>
 
       {/* FOOTER / STATUS BAR */}
-      <footer className={`px-6 py-2 flex items-center justify-between text-[11px] font-mono border-t ${
+      <footer className={`px-3 sm:px-6 py-1.5 sm:py-2 flex items-center justify-between text-[11px] font-mono border-t ${
         theme === 'light' 
           ? 'bg-slate-100 border-slate-200 text-slate-500' 
           : 'bg-[#08090d] border-white/5 text-slate-400'
       } select-none shrink-0`}>
         {/* Left Side: Stats */}
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2 sm:gap-4">
           <div className="flex items-center gap-1">
             <span className="font-semibold text-slate-500">Pos:</span>
             <span>Ln {cursorPos.line}, Col {cursorPos.column}</span>
@@ -642,7 +720,7 @@ function EditorInner({ ydoc, provider, displayName, color, onExit, onCopyInviteL
             <div className="w-px h-3 bg-slate-400/20"></div>
             <div>{stats.lines} lines</div>
             <div className="w-px h-3 bg-slate-400/20"></div>
-            <div>{stats.chars} characters</div>
+            <div>{stats.chars} chars</div>
           </div>
         </div>
 
